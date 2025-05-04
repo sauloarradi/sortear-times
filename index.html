@@ -741,11 +741,21 @@ Lucas"></textarea>
                     teamContent += '<div class="team-players">';
                     
                     team.players.forEach(player => {
-                        const playerClass = player.isGoalkeeper ? 'goalkeeper' : (player.isFake ? 'fake-player' : '');
+                        let playerClass = '';
+                        let playerDisplayName = player.name;
+                        
+                        if (player.isGoalkeeper) {
+                            playerClass = 'goalkeeper';
+                            if (player.isMakeshift) {
+                                playerDisplayName += ' (Improvisado)';
+                            }
+                        } else if (player.isFake) {
+                            playerClass = 'fake-player';
+                        }
                         
                         teamContent += `
                             <div class="player-item">
-                                <div class="player-item-name ${playerClass}">${player.name}</div>
+                                <div class="player-item-name ${playerClass}">${playerDisplayName}</div>
                                 <div class="player-item-rating">${player.rating}</div>
                             </div>
                         `;
