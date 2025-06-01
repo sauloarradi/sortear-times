@@ -36,6 +36,9 @@
             --dark-color: #212529;
             --light-color: #f8f9fa;
             --gray-color: #6c757d;
+            --rating-1-color: #ffeaa7;
+            --rating-2-color: #74b9ff;
+            --rating-3-color: #00b894;
         }
 
         body {
@@ -117,8 +120,188 @@
             transition: background-color 0.3s;
         }
 
-        button:hover {
-            background-color: #0b5ed7;
+        /* Player Counter Styles */
+        .player-counter {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .counter-current {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--primary-color);
+        }
+
+        .counter-status {
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .counter-status.neutral {
+            background-color: #e9ecef;
+            color: var(--gray-color);
+        }
+
+        .counter-status.valid {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .counter-status.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .counter-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Textarea with line numbers */
+        .textarea-container {
+            position: relative;
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 0 0 5px 5px;
+            border-top: none;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 10px 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--gray-color);
+            user-select: none;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .line-number {
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .line-number.has-content {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .textarea-container textarea {
+            border: none;
+            border-radius: 0;
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 20px;
+            padding: 10px;
+            flex: 1;
+        }
+
+        .textarea-container textarea:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px var(--primary-color);
+        }
+
+        /* Rating Legend */
+        .rating-legend {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .rating-legend h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .rating-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
+            border-radius: 8px;
+            border: 2px solid;
+            background-color: white;
+        }
+
+        .rating-item.rating-1 {
+            border-color: var(--rating-1-color);
+            background-color: #fff9e6;
+        }
+
+        .rating-item.rating-2 {
+            border-color: var(--rating-2-color);
+            background-color: #e6f3ff;
+        }
+
+        .rating-item.rating-3 {
+            border-color: var(--rating-3-color);
+            background-color: #e6fff9;
+        }
+
+        .rating-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .rating-1 .rating-number {
+            color: #d63031;
+        }
+
+        .rating-2 .rating-number {
+            color: var(--rating-2-color);
+        }
+
+        .rating-3 .rating-number {
+            color: var(--rating-3-color);
+        }
+
+        .rating-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .rating-description {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            line-height: 1.3;
+        }
+
+        .rating-tip {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 15px;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.9rem;
+            color: #1565c0;
         }
 
         #playersList {
@@ -128,40 +311,154 @@
         .player-card {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
         .player-name {
             font-weight: 600;
             flex: 1;
+            font-size: 1.1rem;
         }
 
-        .player-ratings {
+        .player-controls {
             display: flex;
-            gap: 10px;
+            gap: 20px;
             align-items: center;
         }
 
         .rating-options {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 8px;
+            gap: 12px;
+            align-items: center;
         }
 
         .rating-option {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 2px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .rating-option:hover {
+            transform: scale(1.05);
+        }
+
+        .rating-option.rating-1 {
+            border-color: var(--rating-1-color);
+        }
+
+        .rating-option.rating-2 {
+            border-color: var(--rating-2-color);
+        }
+
+        .rating-option.rating-3 {
+            border-color: var(--rating-3-color);
+        }
+
+        .rating-option.selected {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.3);
+        }
+
+        .rating-option.rating-1.selected {
+            background-color: #fff9e6;
+            border-color: #d63031;
+        }
+
+        .rating-option.rating-2.selected {
+            background-color: #e6f3ff;
+            border-color: var(--rating-2-color);
+        }
+
+        .rating-option.rating-3.selected {
+            background-color: #e6fff9;
+            border-color: var(--rating-3-color);
+        }
+
+        .rating-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+            opacity: 0;
+            position: absolute;
+        }
+
+        .rating-option-number {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .rating-option.rating-1 .rating-option-number {
+            color: #d63031;
+        }
+
+        .rating-option.rating-2 .rating-option-number {
+            color: var(--rating-2-color);
+        }
+
+        .rating-option.rating-3 .rating-option-number {
+            color: var(--rating-3-color);
+        }
+
+        .rating-option-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .goalkeeper-checkbox {
-            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #28a745;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .goalkeeper-checkbox:hover {
+            background-color: #f8fff9;
+            transform: scale(1.02);
+        }
+
+        .goalkeeper-checkbox.selected {
+            background-color: #d4edda;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+        }
+
+        .goalkeeper-checkbox input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            opacity: 0;
+            position: absolute;
+        }
+
+        .goalkeeper-icon {
+            font-size: 1.2rem;
+        }
+
+        .goalkeeper-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #28a745;
         }
 
         #teamsResult {
@@ -353,57 +650,90 @@
             background-color: #1da851 !important;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
+            @media (max-width: 768px) {
+                .container {
+                    padding: 10px;
+                }
+                
+                h1 {
+                    font-size: 1.5rem;
+                }
+                
+                .subtitle {
+                    font-size: 1rem;
+                }
+                
+                .rating-scale {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .player-counter {
+                    flex-direction: column;
+                    gap: 8px;
+                    align-items: flex-start;
+                }
+                
+                .counter-info {
+                    width: 100%;
+                }
+                
+                .counter-status {
+                    width: 100%;
+                    text-align: center;
+                }
+                
+                .line-numbers {
+                    min-width: 35px;
+                    padding: 10px 6px;
+                }
+                
+                .team-card {
+                    margin-bottom: 20px;
+                }
+                
+                .player-card {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+                
+                .player-name {
+                    margin-bottom: 0;
+                    font-size: 1rem;
+                }
+                
+                .player-controls {
+                    width: 100%;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 15px;
+                }
+                
+                .rating-options {
+                    order: 2;
+                    gap: 8px;
+                }
+                
+                .goalkeeper-checkbox {
+                    order: 1;
+                    align-self: flex-start;
+                }
+                
+                button {
+                    width: 100%;
+                    margin-top: 5px;
+                }
+                
+                .btn-container {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .btn-back, .btn-next {
+                    width: 100%;
+                }
             }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .team-card {
-                margin-bottom: 20px;
-            }
-            
-            .player-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .player-name {
-                margin-bottom: 10px;
-                font-size: 1rem;
-            }
-            
-            .player-ratings {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .rating-options {
-                display: flex;
-                gap: 10px;
-            }
-            
-            button {
-                width: 100%;
-                margin-top: 5px;
-            }
-            
-            .btn-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .btn-back, .btn-next {
-                width: 100%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -457,7 +787,23 @@
 
                 <div class="form-group">
                     <label for="playersInput">Lista de Jogadores (um por linha):</label>
-                    <textarea id="playersInput" placeholder="Digite um nome por linha...
+                    
+                    <!-- Player Counter -->
+                    <div class="player-counter">
+                        <div class="counter-info">
+                            <span class="counter-current">0</span> jogadores adicionados
+                        </div>
+                        <div class="counter-status" id="counterStatus">
+                            Digite os nomes dos jogadores
+                        </div>
+                    </div>
+                    
+                    <!-- Textarea with line numbers -->
+                    <div class="textarea-container">
+                        <div class="line-numbers" id="lineNumbers">
+                            <div class="line-number">1</div>
+                        </div>
+                        <textarea id="playersInput" placeholder="Digite um nome por linha...
 Exemplo:
 João
 Pedro
@@ -467,6 +813,7 @@ Maria
 Ana
 Marcos
 Lucas"></textarea>
+                    </div>
                 </div>
 
                 <div class="btn-container">
@@ -480,7 +827,30 @@ Lucas"></textarea>
         <div class="step" id="step2">
             <div class="card">
                 <h2>Qualificar Jogadores</h2>
-                <p>Atribua uma nota de 1 (menor) a 3 (maior) para cada jogador e marque se é goleiro.</p>
+                
+                <div class="rating-legend">
+                    <h3>📊 Como Avaliar os Jogadores</h3>
+                    <div class="rating-scale">
+                        <div class="rating-item rating-1">
+                            <div class="rating-number">1</div>
+                            <div class="rating-label">AMADOR</div>
+                            <div class="rating-description">Jogador iniciante, corre errado, juvenil</div>
+                        </div>
+                        <div class="rating-item rating-2">
+                            <div class="rating-number">2</div>
+                            <div class="rating-label">INTERMEDIÁRIO</div>
+                            <div class="rating-description">Jogador regular, não marca a bola, corre certo</div>
+                        </div>
+                        <div class="rating-item rating-3">
+                            <div class="rating-number">3</div>
+                            <div class="rating-label">LENDÁRIO</div>
+                            <div class="rating-description">Craque, decide o jogo</div>
+                        </div>
+                    </div>
+                    <div class="rating-tip">
+                        💡 <strong>Dica:</strong> Seja honesto na avaliação para garantir times equilibrados. A maioria dos jogadores deve ser nível 2.
+                    </div>
+                </div>
 
                 <div id="playersList">
                     <!-- Players will be added here dynamically -->
@@ -536,6 +906,8 @@ Lucas"></textarea>
             const playersInput = document.getElementById('playersInput');
             const playersList = document.getElementById('playersList');
             const teamsResult = document.getElementById('teamsResult');
+            const lineNumbers = document.getElementById('lineNumbers');
+            const counterStatus = document.getElementById('counterStatus');
             
             // Navigation buttons
             const goToStep2 = document.getElementById('goToStep2');
@@ -556,7 +928,93 @@ Lucas"></textarea>
                 } else {
                     societyPlayersContainer.style.display = 'none';
                 }
+                updatePlayerCounter(); // Update counter when game type changes
             });
+
+            // Update counter when number of teams changes
+            numTeamsSelect.addEventListener('change', updatePlayerCounter);
+
+            // Function to update line numbers and player counter
+            function updateLineNumbers() {
+                const lines = playersInput.value.split('\n');
+                const totalLines = Math.max(lines.length, 8); // Minimum 8 lines visible
+                
+                lineNumbers.innerHTML = '';
+                for (let i = 1; i <= totalLines; i++) {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'line-number';
+                    lineDiv.textContent = i;
+                    
+                    // Highlight line numbers that have content
+                    if (i <= lines.length && lines[i-1].trim() !== '') {
+                        lineDiv.classList.add('has-content');
+                    }
+                    
+                    lineNumbers.appendChild(lineDiv);
+                }
+            }
+
+            // Function to update player counter and status
+            function updatePlayerCounter() {
+                const playerNames = playersInput.value.split('\n').filter(name => name.trim() !== '');
+                const playerCount = playerNames.length;
+                
+                // Update counter display
+                document.querySelector('.counter-current').textContent = playerCount;
+                
+                // Calculate required players
+                const gameType = gameTypeSelect.value;
+                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                let numTimes = parseInt(numTeamsSelect.value);
+                const requiredPlayers = numTimes * playersPerTeam;
+                const minPlayers = numTimes; // At least 1 real player per team
+                const maxFakeAllowed = playersPerTeam - 1;
+                
+                // Update status
+                let statusText = '';
+                let statusClass = '';
+                
+                if (playerCount === 0) {
+                    statusText = 'Digite os nomes dos jogadores';
+                    statusClass = 'neutral';
+                } else if (playerCount < minPlayers) {
+                    statusText = `Mínimo: ${minPlayers} jogadores`;
+                    statusClass = 'error';
+                } else if (playerCount === requiredPlayers) {
+                    statusText = '✓ Número perfeito!';
+                    statusClass = 'valid';
+                } else if (playerCount < requiredPlayers) {
+                    const missing = requiredPlayers - playerCount;
+                    if (missing <= maxFakeAllowed) {
+                        statusText = `✓ OK (${missing} fictício${missing > 1 ? 's' : ''})`;
+                        statusClass = 'valid';
+                    } else {
+                        statusText = `Faltam ${missing - maxFakeAllowed} jogador${(missing - maxFakeAllowed) > 1 ? 'es' : ''}`;
+                        statusClass = 'error';
+                    }
+                } else {
+                    const excess = playerCount - requiredPlayers;
+                    statusText = `${excess} jogador${excess > 1 ? 'es' : ''} sobrando`;
+                    statusClass = 'warning';
+                }
+                
+                counterStatus.textContent = statusText;
+                counterStatus.className = `counter-status ${statusClass}`;
+            }
+
+            // Add event listeners for textarea
+            playersInput.addEventListener('input', function() {
+                updateLineNumbers();
+                updatePlayerCounter();
+            });
+
+            playersInput.addEventListener('scroll', function() {
+                lineNumbers.scrollTop = playersInput.scrollTop;
+            });
+
+            // Initialize on page load
+            updateLineNumbers();
+            updatePlayerCounter();
 
             // Função para exibir modal customizado
             function showCustomAlert(message) {
@@ -725,30 +1183,64 @@ Lucas"></textarea>
                     return;
                 }
                 
-                // Generate player rating cards
+                // Generate player rating cards with improved interface
                 playersList.innerHTML = '';
                 playerNames.forEach((name, index) => {
                     const playerCard = document.createElement('div');
                     playerCard.className = 'player-card';
                     playerCard.innerHTML = `
                         <div class="player-name">${name.trim()}</div>
-                        <div class="player-ratings">
+                        <div class="player-controls">
                             <div class="rating-options">
                                 ${[1, 2, 3].map(rating => `
-                                    <label class="rating-option">
+                                    <label class="rating-option rating-${rating} ${rating === 2 ? 'selected' : ''}" data-rating="${rating}" data-player="${index}">
                                         <input type="radio" name="rating_${index}" value="${rating}" ${rating === 2 ? 'checked' : ''}>
-                                        ${rating}
+                                        <div class="rating-option-number">${rating}</div>
+                                        <div class="rating-option-label">${rating === 1 ? 'Amador' : rating === 2 ? 'Intermediário' : 'Lendário'}</div>
                                     </label>
                                 `).join('')}
                             </div>
-                            <div class="goalkeeper-checkbox">
-                                <label>
-                                    <input type="checkbox" name="goalkeeper_${index}"> Goleiro
-                                </label>
-                            </div>
+                            <label class="goalkeeper-checkbox" data-player="${index}">
+                                <input type="checkbox" name="goalkeeper_${index}">
+                                <span class="goalkeeper-icon">🥅</span>
+                                <span class="goalkeeper-label">Goleiro</span>
+                            </label>
                         </div>
                     `;
                     playersList.appendChild(playerCard);
+                });
+                
+                // Add click handlers for rating options
+                document.querySelectorAll('.rating-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const playerIndex = this.dataset.player;
+                        const rating = this.dataset.rating;
+                        
+                        // Remove selected class from all options for this player
+                        document.querySelectorAll(`[data-player="${playerIndex}"].rating-option`).forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to clicked option
+                        this.classList.add('selected');
+                        
+                        // Check the radio button
+                        this.querySelector('input[type="radio"]').checked = true;
+                    });
+                });
+                
+                // Add click handlers for goalkeeper checkboxes
+                document.querySelectorAll('.goalkeeper-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', function() {
+                        const input = this.querySelector('input[type="checkbox"]');
+                        input.checked = !input.checked;
+                        
+                        if (input.checked) {
+                            this.classList.add('selected');
+                        } else {
+                            this.classList.remove('selected');
+                        }
+                    });
                 });
                 
                 showStep(2);
@@ -773,6 +1265,24 @@ Lucas"></textarea>
                         isGoalkeeper
                     });
                 });
+                
+                // Validar número de goleiros
+                const numTimes = parseInt(numTeamsSelect.value);
+                const goalkeepers = players.filter(p => p.isGoalkeeper);
+                
+                if (goalkeepers.length > numTimes) {
+                    let mensagem = `⚠️ Muitos goleiros selecionados!\n\n`;
+                    mensagem += `Você selecionou ${goalkeepers.length} goleiros para ${numTimes} times.\n`;
+                    mensagem += `Cada time pode ter apenas 1 goleiro.\n\n`;
+                    mensagem += `Goleiros selecionados:\n`;
+                    goalkeepers.forEach((gk, index) => {
+                        mensagem += `• ${gk.name}\n`;
+                    });
+                    mensagem += `\nPor favor, desmarque ${goalkeepers.length - numTimes} goleiro${(goalkeepers.length - numTimes) > 1 ? 's' : ''} antes de continuar.`;
+                    
+                    showCustomAlert(mensagem);
+                    return;
+                }
                 
                 // Sort teams
                 const teams = createBalancedTeamsWithPythonLogic(players);
@@ -822,7 +1332,7 @@ Lucas"></textarea>
                 
                 teams.forEach((team, index) => {
                     const teamAvg = (team.reduce((sum, player) => sum + player.rating, 0) / team.length).toFixed(1);
-                    message += `*Time ${index + 1}* (Média: ${teamAvg})\n`;
+                    message += `*Time ${index + 1}* \n`;
                     
                     // Ordenar jogadores - goleiros primeiro, depois por rating
                     const sortedTeam = [...team].sort((a, b) => {
@@ -1065,6 +1575,7 @@ Lucas"></textarea>
                     teamsResult.appendChild(teamCard);
                 });
             }
+            
             // Eventos personalizados para o Google Analytics
             function trackEvent(eventName, parameters = {}) {
                 if (typeof gtag !== 'undefined') {
