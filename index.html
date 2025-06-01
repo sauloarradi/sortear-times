@@ -4,6 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteador de Times - Futsal/Society</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TBGBQ7ZFSL"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TBGBQ7ZFSL');
+    </script>
+
+    <!-- Hotjar Tracking Code for https://sauloarradi.github.io/sortear-times/ -->
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:6421938,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+    
     <style>
         :root {
             --primary-color: #0d6efd;
@@ -811,25 +833,16 @@ Lucas"></textarea>
                     
                     sortedTeam.forEach(player => {
                         let playerName = player.name;
-                        let emoji = '';
                         
                         if (player.isGoalkeeper) {
-                            emoji = '🥅';
                             if (player.isMakeshift) {
                                 playerName += ' (Goleiro Improvisado)';
                             } else if (!player.isFake) {
                                 playerName += ' (Goleiro)';
                             }
-                        } else if (player.isFake) {
-                            emoji = '❓';
-                        } else {
-                            // Emoji baseado no rating
-                            if (player.rating === 3) emoji = '⭐';
-                            else if (player.rating === 2) emoji = '✨';
-                            else emoji = '🔥';
                         }
                         
-                        message += `${emoji} ${playerName} (${player.rating})\n`;
+                        message += `${playerName}\n`;
                     });
                     
                     message += '\n';
@@ -1052,6 +1065,42 @@ Lucas"></textarea>
                     teamsResult.appendChild(teamCard);
                 });
             }
+            // Eventos personalizados para o Google Analytics
+            function trackEvent(eventName, parameters = {}) {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', eventName, parameters);
+                }
+            }
+
+            // Rastrear quando usuário avança para etapa 2
+            goToStep2.addEventListener('click', function() {
+                trackEvent('step_completed', {
+                    'step_name': 'configuration',
+                    'game_type': gameTypeSelect.value,
+                    'num_teams': numTeamsSelect.value
+                });
+                
+                // Resto do código continua igual...
+            });
+
+            // Rastrear quando faz o sorteio
+            goToStep3.addEventListener('click', function() {
+                trackEvent('teams_generated', {
+                    'num_players': players.length,
+                    'num_teams': numTeamsSelect.value
+                });
+                
+                // Resto do código continua igual...
+            });
+
+            // Rastrear compartilhamento no WhatsApp
+            shareWhatsApp.addEventListener('click', function() {
+                trackEvent('share_whatsapp', {
+                    'num_teams': currentTeams.length
+                });
+                
+                // Resto do código continua igual...
+            });
         });
     </script>
 </body>
