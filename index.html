@@ -4,28 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteador de Times - Futsal/Society</title>
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TBGBQ7ZFSL"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-TBGBQ7ZFSL');
-    </script>
-
-    <!-- Hotjar Tracking Code for https://sauloarradi.github.io/sortear-times/ -->
-    <script>
-        (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:6421938,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-    </script>
-    
     <style>
         :root {
             --primary-color: #0d6efd;
@@ -36,9 +14,6 @@
             --dark-color: #212529;
             --light-color: #f8f9fa;
             --gray-color: #6c757d;
-            --rating-1-color: #ffeaa7;
-            --rating-2-color: #74b9ff;
-            --rating-3-color: #00b894;
         }
 
         body {
@@ -120,188 +95,8 @@
             transition: background-color 0.3s;
         }
 
-        /* Player Counter Styles */
-        .player-counter {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px 8px 0 0;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .counter-current {
-            font-weight: bold;
-            font-size: 16px;
-            color: var(--primary-color);
-        }
-
-        .counter-status {
-            font-weight: 500;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .counter-status.neutral {
-            background-color: #e9ecef;
-            color: var(--gray-color);
-        }
-
-        .counter-status.valid {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .counter-status.warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .counter-status.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Textarea with line numbers */
-        .textarea-container {
-            position: relative;
-            display: flex;
-            border: 1px solid #ccc;
-            border-radius: 0 0 5px 5px;
-            border-top: none;
-            overflow: hidden;
-        }
-
-        .line-numbers {
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            padding: 10px 8px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 20px;
-            color: var(--gray-color);
-            user-select: none;
-            min-width: 40px;
-            text-align: right;
-        }
-
-        .line-number {
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .line-number.has-content {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .textarea-container textarea {
-            border: none;
-            border-radius: 0;
-            resize: vertical;
-            min-height: 100px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 20px;
-            padding: 10px;
-            flex: 1;
-        }
-
-        .textarea-container textarea:focus {
-            outline: none;
-            box-shadow: inset 0 0 0 2px var(--primary-color);
-        }
-
-        /* Rating Legend */
-        .rating-legend {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .rating-legend h3 {
-            margin: 0 0 15px 0;
-            color: var(--primary-color);
-            text-align: center;
-            font-size: 1.3rem;
-        }
-
-        .rating-scale {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .rating-item {
-            flex: 1;
-            text-align: center;
-            padding: 15px 10px;
-            border-radius: 8px;
-            border: 2px solid;
-            background-color: white;
-        }
-
-        .rating-item.rating-1 {
-            border-color: var(--rating-1-color);
-            background-color: #fff9e6;
-        }
-
-        .rating-item.rating-2 {
-            border-color: var(--rating-2-color);
-            background-color: #e6f3ff;
-        }
-
-        .rating-item.rating-3 {
-            border-color: var(--rating-3-color);
-            background-color: #e6fff9;
-        }
-
-        .rating-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .rating-1 .rating-number {
-            color: #d63031;
-        }
-
-        .rating-2 .rating-number {
-            color: var(--rating-2-color);
-        }
-
-        .rating-3 .rating-number {
-            color: var(--rating-3-color);
-        }
-
-        .rating-label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .rating-description {
-            font-size: 0.8rem;
-            color: var(--gray-color);
-            line-height: 1.3;
-        }
-
-        .rating-tip {
-            background-color: #e3f2fd;
-            border-left: 4px solid var(--primary-color);
-            padding: 12px 15px;
-            border-radius: 0 5px 5px 0;
-            font-size: 0.9rem;
-            color: #1565c0;
+        button:hover {
+            background-color: #0b5ed7;
         }
 
         #playersList {
@@ -311,154 +106,40 @@
         .player-card {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.3s ease;
-        }
-
-        .player-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
         }
 
         .player-name {
             font-weight: 600;
             flex: 1;
-            font-size: 1.1rem;
         }
 
-        .player-controls {
+        .player-ratings {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             align-items: center;
         }
 
         .rating-options {
             display: flex;
-            gap: 12px;
-            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
         }
 
         .rating-option {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            background-color: white;
-        }
-
-        .rating-option:hover {
-            transform: scale(1.05);
-        }
-
-        .rating-option.rating-1 {
-            border-color: var(--rating-1-color);
-        }
-
-        .rating-option.rating-2 {
-            border-color: var(--rating-2-color);
-        }
-
-        .rating-option.rating-3 {
-            border-color: var(--rating-3-color);
-        }
-
-        .rating-option.selected {
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.3);
-        }
-
-        .rating-option.rating-1.selected {
-            background-color: #fff9e6;
-            border-color: #d63031;
-        }
-
-        .rating-option.rating-2.selected {
-            background-color: #e6f3ff;
-            border-color: var(--rating-2-color);
-        }
-
-        .rating-option.rating-3.selected {
-            background-color: #e6fff9;
-            border-color: var(--rating-3-color);
-        }
-
-        .rating-option input[type="radio"] {
-            width: auto;
-            margin: 0;
-            opacity: 0;
-            position: absolute;
-        }
-
-        .rating-option-number {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .rating-option.rating-1 .rating-option-number {
-            color: #d63031;
-        }
-
-        .rating-option.rating-2 .rating-option-number {
-            color: var(--rating-2-color);
-        }
-
-        .rating-option.rating-3 .rating-option-number {
-            color: var(--rating-3-color);
-        }
-
-        .rating-option-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 2px;
         }
 
         .goalkeeper-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background-color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid #28a745;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .goalkeeper-checkbox:hover {
-            background-color: #f8fff9;
-            transform: scale(1.02);
-        }
-
-        .goalkeeper-checkbox.selected {
-            background-color: #d4edda;
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
-        }
-
-        .goalkeeper-checkbox input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            opacity: 0;
-            position: absolute;
-        }
-
-        .goalkeeper-icon {
-            font-size: 1.2rem;
-        }
-
-        .goalkeeper-label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #28a745;
+            margin-left: 15px;
         }
 
         #teamsResult {
@@ -583,7 +264,6 @@
             background-color: var(--secondary-color);
         }
 
-        /* Estilos para modal customizado */
         .custom-modal {
             display: none;
             position: fixed;
@@ -650,97 +330,94 @@
             background-color: #1da851 !important;
         }
 
-            @media (max-width: 768px) {
-                .container {
-                    padding: 10px;
-                }
-                
-                h1 {
-                    font-size: 1.5rem;
-                }
-                
-                .subtitle {
-                    font-size: 1rem;
-                }
-                
-                .rating-scale {
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                
-                .player-counter {
-                    flex-direction: column;
-                    gap: 8px;
-                    align-items: flex-start;
-                }
-                
-                .counter-info {
-                    width: 100%;
-                }
-                
-                .counter-status {
-                    width: 100%;
-                    text-align: center;
-                }
-                
-                .line-numbers {
-                    min-width: 35px;
-                    padding: 10px 6px;
-                }
-                
-                .team-card {
-                    margin-bottom: 20px;
-                }
-                
-                .player-card {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 15px;
-                }
-                
-                .player-name {
-                    margin-bottom: 0;
-                    font-size: 1rem;
-                }
-                
-                .player-controls {
-                    width: 100%;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-                    gap: 15px;
-                }
-                
-                .rating-options {
-                    order: 2;
-                    gap: 8px;
-                }
-                
-                .goalkeeper-checkbox {
-                    order: 1;
-                    align-self: flex-start;
-                }
-                
-                button {
-                    width: 100%;
-                    margin-top: 5px;
-                }
-                
-                .btn-container {
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                
-                .btn-back, .btn-next {
-                    width: 100%;
-                }
+        .rating-info {
+            background-color: #e7f3ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .rating-info h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+
+        .rating-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .player-counter {
+            text-align: right;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
             }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .team-card {
+                margin-bottom: 20px;
+            }
+            
+            .player-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .player-name {
+                margin-bottom: 10px;
+                font-size: 1rem;
+            }
+            
+            .player-ratings {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .rating-options {
+                display: flex;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-back, .btn-next {
+                width: 100%;
+            }
+
+            #shareWhatsApp {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Sorteador de Times</h1>
-            <div class="subtitle">Futsal & Society</div>
+            <div class="subtitle">Futsal & Society - Versão Melhorada</div>
         </header>
 
         <div class="steps-indicator">
@@ -749,7 +426,6 @@
             <div class="step-dot" data-step="3"></div>
         </div>
 
-        <!-- Step 1: Configurações iniciais -->
         <div class="step active" id="step1">
             <div class="card">
                 <h2>Configurações</h2>
@@ -787,23 +463,7 @@
 
                 <div class="form-group">
                     <label for="playersInput">Lista de Jogadores (um por linha):</label>
-                    
-                    <!-- Player Counter -->
-                    <div class="player-counter">
-                        <div class="counter-info">
-                            <span class="counter-current">0</span> jogadores adicionados
-                        </div>
-                        <div class="counter-status" id="counterStatus">
-                            Digite os nomes dos jogadores
-                        </div>
-                    </div>
-                    
-                    <!-- Textarea with line numbers -->
-                    <div class="textarea-container">
-                        <div class="line-numbers" id="lineNumbers">
-                            <div class="line-number">1</div>
-                        </div>
-                        <textarea id="playersInput" placeholder="Digite um nome por linha...
+                    <textarea id="playersInput" placeholder="Digite um nome por linha...
 Exemplo:
 João
 Pedro
@@ -813,47 +473,34 @@ Maria
 Ana
 Marcos
 Lucas"></textarea>
+                    <div id="playerCounter" class="player-counter">
+                        0 jogadores listados
                     </div>
                 </div>
 
                 <div class="btn-container">
-                    <div></div> <!-- Placeholder para manter o espaçamento -->
+                    <div></div>
                     <button class="btn-next" id="goToStep2">Próximo: Qualificar Jogadores</button>
                 </div>
             </div>
         </div>
 
-        <!-- Step 2: Qualificar jogadores -->
         <div class="step" id="step2">
             <div class="card">
                 <h2>Qualificar Jogadores</h2>
                 
-                <div class="rating-legend">
-                    <h3>📊 Como Avaliar os Jogadores</h3>
-                    <div class="rating-scale">
-                        <div class="rating-item rating-1">
-                            <div class="rating-number">1</div>
-                            <div class="rating-label">AMADOR</div>
-                            <div class="rating-description">Jogador iniciante, corre errado, juvenil</div>
-                        </div>
-                        <div class="rating-item rating-2">
-                            <div class="rating-number">2</div>
-                            <div class="rating-label">INTERMEDIÁRIO</div>
-                            <div class="rating-description">Jogador regular, não marca a bola, corre certo</div>
-                        </div>
-                        <div class="rating-item rating-3">
-                            <div class="rating-number">3</div>
-                            <div class="rating-label">LENDÁRIO</div>
-                            <div class="rating-description">Craque, decide o jogo</div>
-                        </div>
-                    </div>
-                    <div class="rating-tip">
-                        💡 <strong>Dica:</strong> Seja honesto na avaliação para garantir times equilibrados. A maioria dos jogadores deve ser nível 2.
-                    </div>
+                <div class="rating-info">
+                    <h4>Sistema de Qualificação (1 a 5):</h4>
+                    <p><strong>Nível 1:</strong> Iniciante - Técnica básica, ainda desenvolvendo habilidades</p>
+                    <p><strong>Nível 2:</strong> Intermediário - Boa técnica, conhece o jogo</p>
+                    <p><strong>Nível 3:</strong> Avançado - Muito boa técnica, joga bem (PADRÃO)</p>
+                    <p><strong>Nível 4:</strong> Expert - Excelente técnica, se destaca no grupo</p>
+                    <p><strong>Nível 5:</strong> Profissional - Nível excepcional, faz a diferença</p>
                 </div>
 
+                <p>Atribua uma nota de 1 (menor) a 5 (maior) para cada jogador e marque se é goleiro.</p>
+
                 <div id="playersList">
-                    <!-- Players will be added here dynamically -->
                 </div>
 
                 <div class="btn-container">
@@ -863,14 +510,12 @@ Lucas"></textarea>
             </div>
         </div>
 
-        <!-- Step 3: Resultado do sorteio -->
         <div class="step" id="step3">
             <div class="card">
                 <h2>Times Sorteados</h2>
                 <p>Os times foram sorteados de forma equilibrada com base nas qualificações.</p>
 
                 <div id="teamsResult">
-                    <!-- Teams will be added here dynamically -->
                 </div>
 
                 <div class="btn-container">
@@ -886,7 +531,6 @@ Lucas"></textarea>
         </div>
     </div>
 
-    <!-- Modal customizado para alertas -->
     <div id="customModal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-header">⚠️ Atenção</div>
@@ -897,276 +541,196 @@ Lucas"></textarea>
         </div>
     </div>
 
+    <div id="backConfirmModal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">🤔 Manter Qualificações?</div>
+            <div class="modal-body">
+                Você já atribuiu qualificações aos jogadores. O que deseja fazer?
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="keepRatingsBtn" style="background-color: #198754; margin-right: 10px;">
+                    Manter Qualificações
+                </button>
+                <button class="modal-btn" id="clearRatingsBtn" style="background-color: #dc3545;">
+                    Apagar Qualificações
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const gameTypeSelect = document.getElementById('gameType');
-            const societyPlayersContainer = document.getElementById('societyPlayersContainer');
-            const numTeamsSelect = document.getElementById('numTeams');
-            const playersInput = document.getElementById('playersInput');
-            const playersList = document.getElementById('playersList');
-            const teamsResult = document.getElementById('teamsResult');
-            const lineNumbers = document.getElementById('lineNumbers');
-            const counterStatus = document.getElementById('counterStatus');
+            var gameTypeSelect = document.getElementById('gameType');
+            var societyPlayersContainer = document.getElementById('societyPlayersContainer');
+            var numTeamsSelect = document.getElementById('numTeams');
+            var playersInput = document.getElementById('playersInput');
+            var playersList = document.getElementById('playersList');
+            var teamsResult = document.getElementById('teamsResult');
+            var playerCounter = document.getElementById('playerCounter');
             
-            // Navigation buttons
-            const goToStep2 = document.getElementById('goToStep2');
-            const goToStep3 = document.getElementById('goToStep3');
-            const backToStep1 = document.getElementById('backToStep1');
-            const backToStep2 = document.getElementById('backToStep2');
-            const newDraw = document.getElementById('newDraw');
-            const shareWhatsApp = document.getElementById('shareWhatsApp');
+            var goToStep2 = document.getElementById('goToStep2');
+            var goToStep3 = document.getElementById('goToStep3');
+            var backToStep1 = document.getElementById('backToStep1');
+            var backToStep2 = document.getElementById('backToStep2');
+            var newDraw = document.getElementById('newDraw');
+            var shareWhatsApp = document.getElementById('shareWhatsApp');
             
-            // Steps
-            const steps = document.querySelectorAll('.step');
-            const stepDots = document.querySelectorAll('.step-dot');
+            var steps = document.querySelectorAll('.step');
+            var stepDots = document.querySelectorAll('.step-dot');
+            var currentTeams = [];
+            var savedRatings = {};
 
-            // Show/hide society players selection based on game type
+            function updatePlayerCounter() {
+                var playerNames = playersInput.value.split('\n').filter(function(name) {
+                    return name.trim() !== '';
+                });
+                var count = playerNames.length;
+                playerCounter.textContent = count + ' jogador' + (count !== 1 ? 'es' : '') + ' listado' + (count !== 1 ? 's' : '');
+            }
+
+            playersInput.addEventListener('input', updatePlayerCounter);
+            updatePlayerCounter();
+
             gameTypeSelect.addEventListener('change', function() {
                 if (this.value === 'society') {
                     societyPlayersContainer.style.display = 'block';
                 } else {
                     societyPlayersContainer.style.display = 'none';
                 }
-                updatePlayerCounter(); // Update counter when game type changes
             });
 
-            // Update counter when number of teams changes
-            numTeamsSelect.addEventListener('change', updatePlayerCounter);
-
-            // Function to update line numbers and player counter
-            function updateLineNumbers() {
-                const lines = playersInput.value.split('\n');
-                const totalLines = Math.max(lines.length, 8); // Minimum 8 lines visible
-                
-                lineNumbers.innerHTML = '';
-                for (let i = 1; i <= totalLines; i++) {
-                    const lineDiv = document.createElement('div');
-                    lineDiv.className = 'line-number';
-                    lineDiv.textContent = i;
-                    
-                    // Highlight line numbers that have content
-                    if (i <= lines.length && lines[i-1].trim() !== '') {
-                        lineDiv.classList.add('has-content');
-                    }
-                    
-                    lineNumbers.appendChild(lineDiv);
-                }
-            }
-
-            // Function to update player counter and status
-            function updatePlayerCounter() {
-                const playerNames = playersInput.value.split('\n').filter(name => name.trim() !== '');
-                const playerCount = playerNames.length;
-                
-                // Update counter display
-                document.querySelector('.counter-current').textContent = playerCount;
-                
-                // Calculate required players
-                const gameType = gameTypeSelect.value;
-                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                let numTimes = parseInt(numTeamsSelect.value);
-                const requiredPlayers = numTimes * playersPerTeam;
-                const minPlayers = numTimes; // At least 1 real player per team
-                const maxFakeAllowed = playersPerTeam - 1;
-                
-                // Update status
-                let statusText = '';
-                let statusClass = '';
-                
-                if (playerCount === 0) {
-                    statusText = 'Digite os nomes dos jogadores';
-                    statusClass = 'neutral';
-                } else if (playerCount < minPlayers) {
-                    statusText = `Mínimo: ${minPlayers} jogadores`;
-                    statusClass = 'error';
-                } else if (playerCount === requiredPlayers) {
-                    statusText = '✓ Número perfeito!';
-                    statusClass = 'valid';
-                } else if (playerCount < requiredPlayers) {
-                    const missing = requiredPlayers - playerCount;
-                    if (missing <= maxFakeAllowed) {
-                        statusText = `✓ OK (${missing} fictício${missing > 1 ? 's' : ''})`;
-                        statusClass = 'valid';
-                    } else {
-                        statusText = `Faltam ${missing - maxFakeAllowed} jogador${(missing - maxFakeAllowed) > 1 ? 'es' : ''}`;
-                        statusClass = 'error';
-                    }
-                } else {
-                    const excess = playerCount - requiredPlayers;
-                    statusText = `${excess} jogador${excess > 1 ? 'es' : ''} sobrando`;
-                    statusClass = 'warning';
-                }
-                
-                counterStatus.textContent = statusText;
-                counterStatus.className = `counter-status ${statusClass}`;
-            }
-
-            // Add event listeners for textarea
-            playersInput.addEventListener('input', function() {
-                updateLineNumbers();
-                updatePlayerCounter();
-            });
-
-            playersInput.addEventListener('scroll', function() {
-                lineNumbers.scrollTop = playersInput.scrollTop;
-            });
-
-            // Initialize on page load
-            updateLineNumbers();
-            updatePlayerCounter();
-
-            // Função para exibir modal customizado
             function showCustomAlert(message) {
-                const modal = document.getElementById('customModal');
-                const modalMessage = document.getElementById('modalMessage');
+                var modal = document.getElementById('customModal');
+                var modalMessage = document.getElementById('modalMessage');
                 modalMessage.textContent = message;
                 modal.style.display = 'block';
             }
 
-            // Função para fechar modal
             function closeCustomModal() {
-                const modal = document.getElementById('customModal');
+                var modal = document.getElementById('customModal');
                 modal.style.display = 'none';
             }
 
-            // Event listener para o botão OK do modal
             document.getElementById('modalOkButton').addEventListener('click', closeCustomModal);
 
-            // Fechar modal clicando fora dele
             window.onclick = function(event) {
-                const modal = document.getElementById('customModal');
+                var modal = document.getElementById('customModal');
+                var backModal = document.getElementById('backConfirmModal');
                 if (event.target === modal) {
                     closeCustomModal();
                 }
+                if (event.target === backModal) {
+                    backModal.style.display = 'none';
+                }
+            };
+
+            function saveCurrentRatings() {
+                savedRatings = {};
+                var playerCards = playersList.querySelectorAll('.player-card');
+                
+                for (var i = 0; i < playerCards.length; i++) {
+                    var card = playerCards[i];
+                    var name = card.querySelector('.player-name').textContent.trim();
+                    var ratingInput = card.querySelector('input[name="rating_' + i + '"]:checked');
+                    var isGoalkeeper = card.querySelector('input[name="goalkeeper_' + i + '"]').checked;
+                    
+                    if (ratingInput) {
+                        savedRatings[name] = {
+                            rating: parseInt(ratingInput.value),
+                            isGoalkeeper: isGoalkeeper
+                        };
+                    }
+                }
             }
 
-            // Navigation functions
+            function restoreSavedRatings() {
+                var playerCards = playersList.querySelectorAll('.player-card');
+                
+                for (var i = 0; i < playerCards.length; i++) {
+                    var card = playerCards[i];
+                    var name = card.querySelector('.player-name').textContent.trim();
+                    
+                    if (savedRatings[name]) {
+                        var savedData = savedRatings[name];
+                        
+                        var ratingInput = card.querySelector('input[name="rating_' + i + '"][value="' + savedData.rating + '"]');
+                        if (ratingInput) {
+                            ratingInput.checked = true;
+                        }
+                        
+                        var gkInput = card.querySelector('input[name="goalkeeper_' + i + '"]');
+                        if (gkInput) {
+                            gkInput.checked = savedData.isGoalkeeper;
+                        }
+                    }
+                }
+            }
+
+            function clearSavedRatings() {
+                savedRatings = {};
+            }
+
+            function hasAnyRatings() {
+                return Object.keys(savedRatings).length > 0;
+            }
+
             function showStep(stepNumber) {
-                steps.forEach(step => step.classList.remove('active'));
-                stepDots.forEach(dot => dot.classList.remove('active'));
+                for (var i = 0; i < steps.length; i++) {
+                    steps[i].classList.remove('active');
+                }
+                for (var i = 0; i < stepDots.length; i++) {
+                    stepDots[i].classList.remove('active');
+                }
                 
-                document.getElementById(`step${stepNumber}`).classList.add('active');
-                document.querySelector(`.step-dot[data-step="${stepNumber}"]`).classList.add('active');
+                document.getElementById('step' + stepNumber).classList.add('active');
+                document.querySelector('.step-dot[data-step="' + stepNumber + '"]').classList.add('active');
             }
 
-            // Função para validar o número de jogadores na Etapa 1
             function validatePlayerCountAtStep1(playerNames) {
-                const gameType = gameTypeSelect.value;
-                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                let numTimes = parseInt(numTeamsSelect.value);
+                var gameType = gameTypeSelect.value;
+                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                var numTimes = parseInt(numTeamsSelect.value);
                 
-                const totalJogadores = playerNames.length;
-                const jogadoresNecessarios = numTimes * playersPerTeam;
-                const faltandoJogadores = jogadoresNecessarios - totalJogadores;
-                const excedente = totalJogadores - jogadoresNecessarios;
+                var totalJogadores = playerNames.length;
+                var jogadoresNecessarios = numTimes * playersPerTeam;
+                var faltandoJogadores = jogadoresNecessarios - totalJogadores;
+                var excedente = totalJogadores - jogadoresNecessarios;
+                var maxJogadoresFicticios = playersPerTeam - 1;
                 
-                // Calcular máximo de jogadores fictícios permitidos dinamicamente
-                // Regra: permitir até (playersPerTeam - 1) jogadores fictícios
-                // Isso significa que pelo menos 1 jogador real deve haver por time
-                const maxJogadoresFicticios = playersPerTeam - 1;
-                
-                // Debug - informações mais claras
-                console.log('=== VALIDAÇÃO DE JOGADORES ===');
-                console.log('Total de jogadores:', totalJogadores);
-                console.log('Jogadores necessários:', jogadoresNecessarios);
-                console.log('Jogadores faltando:', faltandoJogadores);
-                console.log('Jogadores excedentes:', excedente);
-                console.log('Jogadores por time:', playersPerTeam);
-                console.log('Número de times:', numTimes);
-                console.log('Máximo de fictícios permitidos:', maxJogadoresFicticios);
-                console.log('================================');
-                
-                // Verifica se há excedente de jogadores
                 if (excedente > 0) {
-                    let mensagem = `⚠️ Número de jogadores inválido!\n\n`;
-                    mensagem += `Você tem ${totalJogadores} jogadores para ${numTimes} times de ${playersPerTeam} jogadores cada.\n`;
-                    mensagem += `Isso significa que ${excedente} jogador${excedente > 1 ? 'es' : ''} ficar${excedente > 1 ? 'ão' : 'á'} de fora do sorteio.\n\n`;
-                    mensagem += `Opções para resolver:\n`;
-                    mensagem += `• Remover ${excedente} jogador${excedente > 1 ? 'es' : ''} da lista\n`;
-                    
-                    // Calcular quantos times seriam necessários
-                    const timesNecessarios = Math.ceil(totalJogadores / playersPerTeam);
-                    if (timesNecessarios <= 6) {
-                        mensagem += `• Aumentar para ${timesNecessarios} times\n`;
-                    }
-                    
-                    // Calcular se é possível com menos jogadores por time (só para society)
-                    if (gameType === 'society') {
-                        for (let jogPorTime = playersPerTeam - 1; jogPorTime >= 5; jogPorTime--) {
-                            if (totalJogadores % jogPorTime === 0) {
-                                const timesComMenosJog = totalJogadores / jogPorTime;
-                                if (timesComMenosJog === numTimes) {
-                                    mensagem += `• Reduzir para ${jogPorTime} jogadores por time\n`;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
+                    var mensagem = 'Número de jogadores inválido!\n\n';
+                    mensagem += 'Você tem ' + totalJogadores + ' jogadores para ' + numTimes + ' times de ' + playersPerTeam + ' jogadores cada.\n';
+                    mensagem += 'Isso significa que ' + excedente + ' jogador' + (excedente > 1 ? 'es' : '') + ' ficar' + (excedente > 1 ? 'ão' : 'á') + ' de fora do sorteio.';
                     showCustomAlert(mensagem);
                     return false;
                 }
                 
-                // Verifica se faltam muitos jogadores (mais que o máximo permitido)
                 if (faltandoJogadores > maxJogadoresFicticios) {
-                    let mensagem = `⚠️ Número de jogadores inválido!\n\n`;
-                    mensagem += `Você tem ${totalJogadores} jogadores para ${numTimes} times de ${playersPerTeam} jogadores cada.\n`;
-                    mensagem += `Faltam ${faltandoJogadores} jogadores para completar os times.\n`;
-                    mensagem += `O máximo de jogadores fictícios permitidos é ${maxJogadoresFicticios} (pelo menos 1 jogador real por time).\n\n`;
-                    mensagem += `Opções para resolver:\n`;
-                    mensagem += `• Adicionar mais ${faltandoJogadores - maxJogadoresFicticios} jogador${(faltandoJogadores - maxJogadoresFicticios) > 1 ? 'es' : ''} na lista\n`;
-                    
-                    // Calcular quantos times seriam possíveis com os jogadores atuais
-                    const timesMaxPossiveis = Math.floor((totalJogadores + maxJogadoresFicticios) / playersPerTeam);
-                    if (timesMaxPossiveis >= 2) {
-                        mensagem += `• Reduzir para ${timesMaxPossiveis} times\n`;
-                    }
-                    
-                    // Calcular se é possível com menos jogadores por time (só para society)
-                    if (gameType === 'society') {
-                        for (let jogPorTime = playersPerTeam - 1; jogPorTime >= 5; jogPorTime--) {
-                            const necessarioComMenosJog = numTimes * jogPorTime;
-                            const faltaComMenosJog = necessarioComMenosJog - totalJogadores;
-                            const maxFictComMenosJog = jogPorTime - 1;
-                            if (faltaComMenosJog >= 0 && faltaComMenosJog <= maxFictComMenosJog) {
-                                mensagem += `• Reduzir para ${jogPorTime} jogadores por time\n`;
-                                break;
-                            }
-                        }
-                    }
-                    
+                    var mensagem = 'Número de jogadores inválido!\n\n';
+                    mensagem += 'Você tem ' + totalJogadores + ' jogadores para ' + numTimes + ' times de ' + playersPerTeam + ' jogadores cada.\n';
+                    mensagem += 'Faltam ' + faltandoJogadores + ' jogadores para completar os times.';
                     showCustomAlert(mensagem);
                     return false;
                 }
                 
-                // Validação adicional: verificar se o número mínimo de jogadores é atendido
-                // Pelo menos 1 jogador real por time
-                const jogadoresMinimos = numTimes;
+                var jogadoresMinimos = numTimes;
                 if (totalJogadores < jogadoresMinimos) {
-                    let mensagem = `⚠️ Número de jogadores insuficiente!\n\n`;
-                    mensagem += `Você precisa de pelo menos ${jogadoresMinimos} jogadores (1 por time) para ${numTimes} times.\n`;
-                    mensagem += `Atualmente você tem apenas ${totalJogadores} jogador${totalJogadores > 1 ? 'es' : ''}.\n\n`;
-                    mensagem += `Adicione mais ${jogadoresMinimos - totalJogadores} jogador${(jogadoresMinimos - totalJogadores) > 1 ? 'es' : ''} ou reduza o número de times.`;
-                    
+                    var mensagem = 'Número de jogadores insuficiente!\n\n';
+                    mensagem += 'Você precisa de pelo menos ' + jogadoresMinimos + ' jogadores (1 por time) para ' + numTimes + ' times.';
                     showCustomAlert(mensagem);
                     return false;
                 }
                 
-                // Se chegou até aqui, é válido
-                console.log('✅ Validação passou - número de jogadores está adequado');
-                if (faltandoJogadores > 0) {
-                    console.log(`ℹ️ Serão adicionados ${faltandoJogadores} jogador(es) fictício(s)`);
-                }
                 return true;
             }
 
-            // Step 1 to Step 2
             goToStep2.addEventListener('click', function() {
-                const gameType = gameTypeSelect.value;
-                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                var gameType = gameTypeSelect.value;
+                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
                 
-                const playerNames = playersInput.value.split('\n').filter(name => name.trim() !== '');
+                var playerNames = playersInput.value.split('\n').filter(function(name) {
+                    return name.trim() !== '';
+                });
                 
                 if (playerNames.length === 0) {
                     showCustomAlert('Por favor, adicione pelo menos um jogador na lista!');
@@ -1174,131 +738,99 @@ Lucas"></textarea>
                 }
                 
                 if (playerNames.length < playersPerTeam) {
-                    showCustomAlert(`Por favor, adicione pelo menos ${playersPerTeam} jogadores!`);
+                    showCustomAlert('Por favor, adicione pelo menos ' + playersPerTeam + ' jogadores!');
                     return;
                 }
                 
-                // Validar se o número de jogadores é adequado
                 if (!validatePlayerCountAtStep1(playerNames)) {
                     return;
                 }
                 
-                // Generate player rating cards with improved interface
+                saveCurrentRatings();
                 playersList.innerHTML = '';
-                playerNames.forEach((name, index) => {
-                    const playerCard = document.createElement('div');
+                
+                for (var i = 0; i < playerNames.length; i++) {
+                    var name = playerNames[i];
+                    var playerCard = document.createElement('div');
                     playerCard.className = 'player-card';
-                    playerCard.innerHTML = `
-                        <div class="player-name">${name.trim()}</div>
-                        <div class="player-controls">
-                            <div class="rating-options">
-                                ${[1, 2, 3].map(rating => `
-                                    <label class="rating-option rating-${rating} ${rating === 2 ? 'selected' : ''}" data-rating="${rating}" data-player="${index}">
-                                        <input type="radio" name="rating_${index}" value="${rating}" ${rating === 2 ? 'checked' : ''}>
-                                        <div class="rating-option-number">${rating}</div>
-                                        <div class="rating-option-label">${rating === 1 ? 'Amador' : rating === 2 ? 'Intermediário' : 'Lendário'}</div>
-                                    </label>
-                                `).join('')}
-                            </div>
-                            <label class="goalkeeper-checkbox" data-player="${index}">
-                                <input type="checkbox" name="goalkeeper_${index}">
-                                <span class="goalkeeper-icon">🥅</span>
-                                <span class="goalkeeper-label">Goleiro</span>
-                            </label>
-                        </div>
-                    `;
+                    
+                    var ratingOptions = '';
+                    for (var j = 1; j <= 5; j++) {
+                        var checked = j === 3 ? 'checked' : '';
+                        ratingOptions += '<label class="rating-option">';
+                        ratingOptions += '<input type="radio" name="rating_' + i + '" value="' + j + '" ' + checked + '>';
+                        ratingOptions += j;
+                        ratingOptions += '</label>';
+                    }
+                    
+                    playerCard.innerHTML = '<div class="player-name">' + name.trim() + '</div>' +
+                        '<div class="player-ratings">' +
+                        '<div class="rating-options">' + ratingOptions + '</div>' +
+                        '<div class="goalkeeper-checkbox">' +
+                        '<label><input type="checkbox" name="goalkeeper_' + i + '"> Goleiro</label>' +
+                        '</div></div>';
+                    
                     playersList.appendChild(playerCard);
-                });
+                }
                 
-                // Add click handlers for rating options
-                document.querySelectorAll('.rating-option').forEach(option => {
-                    option.addEventListener('click', function() {
-                        const playerIndex = this.dataset.player;
-                        const rating = this.dataset.rating;
-                        
-                        // Remove selected class from all options for this player
-                        document.querySelectorAll(`[data-player="${playerIndex}"].rating-option`).forEach(opt => {
-                            opt.classList.remove('selected');
-                        });
-                        
-                        // Add selected class to clicked option
-                        this.classList.add('selected');
-                        
-                        // Check the radio button
-                        this.querySelector('input[type="radio"]').checked = true;
-                    });
-                });
-                
-                // Add click handlers for goalkeeper checkboxes
-                document.querySelectorAll('.goalkeeper-checkbox').forEach(checkbox => {
-                    checkbox.addEventListener('click', function() {
-                        const input = this.querySelector('input[type="checkbox"]');
-                        input.checked = !input.checked;
-                        
-                        if (input.checked) {
-                            this.classList.add('selected');
-                        } else {
-                            this.classList.remove('selected');
-                        }
-                    });
-                });
+                if (hasAnyRatings()) {
+                    restoreSavedRatings();
+                }
                 
                 showStep(2);
             });
 
-            // Step 2 to Step 3
             goToStep3.addEventListener('click', function() {
-                const playerCards = playersList.querySelectorAll('.player-card');
-                const players = [];
+                var playerCards = playersList.querySelectorAll('.player-card');
+                var players = [];
                 
-                // Collect player data
-                playerCards.forEach((card, index) => {
-                    const name = card.querySelector('.player-name').textContent;
-                    const ratingInput = card.querySelector(`input[name="rating_${index}"]:checked`);
-                    const isGoalkeeper = card.querySelector(`input[name="goalkeeper_${index}"]`).checked;
+                for (var i = 0; i < playerCards.length; i++) {
+                    var card = playerCards[i];
+                    var name = card.querySelector('.player-name').textContent;
+                    var ratingInput = card.querySelector('input[name="rating_' + i + '"]:checked');
+                    var isGoalkeeper = card.querySelector('input[name="goalkeeper_' + i + '"]').checked;
                     
-                    const rating = ratingInput ? parseInt(ratingInput.value) : 2;
+                    var rating = ratingInput ? parseInt(ratingInput.value) : 3;
                     
                     players.push({
-                        name,
-                        rating,
-                        isGoalkeeper
+                        name: name,
+                        rating: rating,
+                        isGoalkeeper: isGoalkeeper
                     });
-                });
-                
-                // Validar número de goleiros
-                const numTimes = parseInt(numTeamsSelect.value);
-                const goalkeepers = players.filter(p => p.isGoalkeeper);
-                
-                if (goalkeepers.length > numTimes) {
-                    let mensagem = `⚠️ Muitos goleiros selecionados!\n\n`;
-                    mensagem += `Você selecionou ${goalkeepers.length} goleiros para ${numTimes} times.\n`;
-                    mensagem += `Cada time pode ter apenas 1 goleiro.\n\n`;
-                    mensagem += `Goleiros selecionados:\n`;
-                    goalkeepers.forEach((gk, index) => {
-                        mensagem += `• ${gk.name}\n`;
-                    });
-                    mensagem += `\nPor favor, desmarque ${goalkeepers.length - numTimes} goleiro${(goalkeepers.length - numTimes) > 1 ? 's' : ''} antes de continuar.`;
-                    
-                    showCustomAlert(mensagem);
-                    return;
                 }
                 
-                // Sort teams
-                const teams = createBalancedTeamsWithPythonLogic(players);
+                var teams = createBalancedTeamsImproved(players);
                 if (teams.length === 0) {
                     return;
                 }
                 
-                // Armazenar times para compartilhamento
                 currentTeams = teams;
-                
                 displayTeams(teams);
                 showStep(3);
             });
 
-            // Back navigation
             backToStep1.addEventListener('click', function() {
+                if (playersList.children.length > 0) {
+                    saveCurrentRatings();
+                    
+                    if (hasAnyRatings()) {
+                        var backModal = document.getElementById('backConfirmModal');
+                        backModal.style.display = 'block';
+                        return;
+                    }
+                }
+                
+                showStep(1);
+            });
+            
+            document.getElementById('keepRatingsBtn').addEventListener('click', function() {
+                document.getElementById('backConfirmModal').style.display = 'none';
+                showStep(1);
+            });
+            
+            document.getElementById('clearRatingsBtn').addEventListener('click', function() {
+                clearSavedRatings();
+                document.getElementById('backConfirmModal').style.display = 'none';
                 showStep(1);
             });
             
@@ -1306,238 +838,348 @@ Lucas"></textarea>
                 showStep(2);
             });
             
-            // New draw button
             newDraw.addEventListener('click', function() {
                 playersInput.value = '';
+                updatePlayerCounter();
                 showStep(1);
             });
 
-            // Variável global para armazenar os times sorteados
-            let currentTeams = [];
-
-            // Share WhatsApp button
             shareWhatsApp.addEventListener('click', function() {
                 if (currentTeams.length > 0) {
                     shareTeamsOnWhatsApp(currentTeams);
                 }
             });
 
-            // Função para gerar link do WhatsApp
             function shareTeamsOnWhatsApp(teams) {
-                const gameType = gameTypeSelect.value;
-                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                var gameType = gameTypeSelect.value;
+                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
                 
-                let message = `⚽ *TIMES SORTEADOS* ⚽\n`;
-                message += `🏟️ ${gameType === 'futsal' ? 'Futsal' : 'Society'} (${playersPerTeam} jogadores)\n\n`;
+                var message = 'TIMES SORTEADOS\n';
+                message += gameType === 'futsal' ? 'Futsal' : 'Society';
+                message += ' (' + playersPerTeam + ' jogadores)\n\n';
                 
-                teams.forEach((team, index) => {
-                    const teamAvg = (team.reduce((sum, player) => sum + player.rating, 0) / team.length).toFixed(1);
-                    message += `*Time ${index + 1}* \n`;
+                for (var i = 0; i < teams.length; i++) {
+                    var team = teams[i];
+                    var teamAvg = 0;
+                    for (var j = 0; j < team.length; j++) {
+                        teamAvg += team[j].rating;
+                    }
+                    teamAvg = (teamAvg / team.length).toFixed(1);
                     
-                    // Ordenar jogadores - goleiros primeiro, depois por rating
-                    const sortedTeam = [...team].sort((a, b) => {
+                    message += 'Time ' + (i + 1) + '\n';
+                    
+                    var sortedTeam = team.slice().sort(function(a, b) {
                         if (a.isGoalkeeper && !b.isGoalkeeper) return -1;
                         if (!a.isGoalkeeper && b.isGoalkeeper) return 1;
                         return b.rating - a.rating;
                     });
                     
-                    sortedTeam.forEach(player => {
-                        let playerName = player.name;
+                    for (var j = 0; j < sortedTeam.length; j++) {
+                        var player = sortedTeam[j];
+                        var playerName = player.name;
+                        var emoji = '';
                         
                         if (player.isGoalkeeper) {
+                            emoji = 'GK';
                             if (player.isMakeshift) {
                                 playerName += ' (Goleiro Improvisado)';
                             } else if (!player.isFake) {
                                 playerName += ' (Goleiro)';
                             }
+                        } else if (player.isFake) {
+                            emoji = '?';
+                        } else {
+                            if (player.rating === 5) emoji = '5*';
+                            else if (player.rating === 4) emoji = '4*';
+                            else if (player.rating === 3) emoji = '3*';
+                            else if (player.rating === 2) emoji = '2*';
+                            else emoji = '1*';
                         }
                         
-                        message += `${playerName}\n`;
-                    });
+                        message += playerName + '\n';
+                    }
                     
                     message += '\n';
-                });
+                }
                 
-                message += '🏆 _Sorteio gerado automaticamente_\n';
-                message += '⚽ _Times equilibrados por habilidade_';
+                message += 'Sorteio gerado automaticamente';
                 
-                // Codificar mensagem para URL
-                const encodedMessage = encodeURIComponent(message);
-                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-                
-                // Abrir WhatsApp
+                var encodedMessage = encodeURIComponent(message);
+                var whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodedMessage;
                 window.open(whatsappUrl, '_blank');
             }
 
-            // Função para embaralhar array
             function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
                 }
             }
 
-            // Função principal baseada na lógica do Python
-            function createBalancedTeamsWithPythonLogic(players) {
-                const gameType = gameTypeSelect.value;
-                let playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                let numTimes = parseInt(numTeamsSelect.value);
+            function createBalancedTeamsImproved(players) {
+                var gameType = gameTypeSelect.value;
+                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                var numTimes = parseInt(numTeamsSelect.value);
                 
-                const totalJogadores = players.length;
-                const jogadoresNecessarios = numTimes * playersPerTeam;
-                const faltandoJogadores = jogadoresNecessarios - totalJogadores;
+                console.log('Iniciando algoritmo Round-Robin CORRETO');
+                console.log('Jogadores por time: ' + playersPerTeam);
+                console.log('Numero de times: ' + numTimes);
                 
-                // Separar goleiros e jogadores por nível
-                let goleiros = players.filter(p => p.isGoalkeeper).sort((a, b) => a.name.localeCompare(b.name));
-                let nivel1 = players.filter(p => p.rating === 1 && !p.isGoalkeeper).sort((a, b) => a.name.localeCompare(b.name));
-                let nivel2 = players.filter(p => p.rating === 2 && !p.isGoalkeeper).sort((a, b) => a.name.localeCompare(b.name));
-                let nivel3 = players.filter(p => p.rating === 3 && !p.isGoalkeeper).sort((a, b) => a.name.localeCompare(b.name));
+                var totalJogadores = players.length;
+                var jogadoresNecessarios = numTimes * playersPerTeam;
+                var faltandoJogadores = jogadoresNecessarios - totalJogadores;
                 
-                // Inicializar times
-                const times = [];
-                for (let i = 0; i < numTimes; i++) {
-                    times.push([]);
-                }
+                var goleiros = [];
+                var jogadoresLinha = [];
                 
-                // Distribuir goleiros reais primeiro
-                shuffleArray(goleiros);
-                for (let i = 0; i < Math.min(numTimes, goleiros.length); i++) {
-                    times[i].push(goleiros[i]);
-                }
-                
-                // Garantir pelo menos 1 jogador de nível 1 por time (se possível)
-                shuffleArray(nivel1);
-                for (let i = 0; i < numTimes && nivel1.length > 0; i++) {
-                    if (times[i].length < playersPerTeam) {
-                        times[i].push(nivel1.shift());
-                    }
-                }
-                
-                // Distribuir jogadores de nível 1 restantes
-                while (nivel1.length > 0) {
-                    const timeComMenosNivel1 = times.reduce((menor, time, index) => {
-                        if (time.length >= playersPerTeam) return menor;
-                        
-                        const nivel1NoTime = time.filter(j => j.rating === 1 && !j.isGoalkeeper).length;
-                        const nivel1NoMenor = times[menor] ? times[menor].filter(j => j.rating === 1 && !j.isGoalkeeper).length : Infinity;
-                        
-                        return (nivel1NoTime < nivel1NoMenor) ? index : menor;
-                    }, 0);
-                    
-                    if (times[timeComMenosNivel1].length < playersPerTeam) {
-                        times[timeComMenosNivel1].push(nivel1.shift());
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].isGoalkeeper) {
+                        goleiros.push(players[i]);
                     } else {
-                        break;
+                        jogadoresLinha.push(players[i]);
                     }
                 }
                 
-                // Distribuir jogadores de nível 3 e depois nível 2
-                function distribuirJogadoresPorNivel(jogadores) {
-                    shuffleArray(jogadores);
-                    while (jogadores.length > 0) {
-                        const timeAlvo = times.reduce((melhor, time, index) => {
-                            if (time.length >= playersPerTeam) return melhor;
-                            
-                            const timeMelhor = times[melhor];
-                            if (!timeMelhor || timeMelhor.length >= playersPerTeam) return index;
-                            
-                            if (time.length < timeMelhor.length) return index;
-                            if (time.length > timeMelhor.length) return melhor;
-                            
-                            const somaTime = time.reduce((sum, j) => sum + j.rating, 0);
-                            const somaMelhor = timeMelhor.reduce((sum, j) => sum + j.rating, 0);
-                            
-                            return somaTime < somaMelhor ? index : melhor;
-                        }, 0);
-                        
-                        if (times[timeAlvo].length < playersPerTeam) {
-                            times[timeAlvo].push(jogadores.shift());
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                
-                distribuirJogadoresPorNivel(nivel3);
-                distribuirJogadoresPorNivel(nivel2);
-                
-                // Adicionar jogadores fictícios apenas se necessário
-                for (let time of times) {
-                    while (time.length < playersPerTeam) {
-                        time.push({
-                            name: 'COMPLETE COM ALGUÉM',
-                            rating: 3,
+                if (faltandoJogadores > 0) {
+                    for (var i = 0; i < faltandoJogadores; i++) {
+                        jogadoresLinha.push({
+                            name: 'COMPLETE COM ALGUEM',
+                            rating: 5,
                             isGoalkeeper: false,
                             isFake: true
                         });
                     }
                 }
                 
-                // Lidar com a questão dos goleiros
-                for (let time of times) {
-                    const temGoleiroReal = time.some(j => j.isGoalkeeper && !j.isFake);
+                shuffleArray(goleiros);
+                shuffleArray(jogadoresLinha);
+                
+                var jogadoresPorNivel = {
+                    1: [],
+                    2: [],
+                    3: [],
+                    4: [],
+                    5: []
+                };
+                
+                for (var i = 0; i < jogadoresLinha.length; i++) {
+                    var jogador = jogadoresLinha[i];
+                    jogadoresPorNivel[jogador.rating].push(jogador);
+                }
+                
+                for (var nivel = 1; nivel <= 5; nivel++) {
+                    shuffleArray(jogadoresPorNivel[nivel]);
+                }
+                
+                console.log('Jogadores disponiveis:');
+                console.log('Goleiros: ' + goleiros.length);
+                for (var nivel = 1; nivel <= 5; nivel++) {
+                    console.log('Nivel ' + nivel + ': ' + jogadoresPorNivel[nivel].length);
+                }
+                
+                var times = [];
+                for (var i = 0; i < numTimes; i++) {
+                    times.push({
+                        id: i + 1,
+                        jogadores: []
+                    });
+                }
+                
+                function pegarProximoJogador(prioridades) {
+                    for (var i = 0; i < prioridades.length; i++) {
+                        var nivel = prioridades[i];
+                        if (nivel === 'goleiro' && goleiros.length > 0) {
+                            return goleiros.shift();
+                        } else if (typeof nivel === 'number' && jogadoresPorNivel[nivel].length > 0) {
+                            return jogadoresPorNivel[nivel].shift();
+                        }
+                    }
+                    return null;
+                }
+                
+                var rodada = 1;
+                var todosTimesCompletos = false;
+                
+                while (!todosTimesCompletos) {
+                    console.log('=== RODADA ' + rodada + ' ===');
                     
-                    if (!temGoleiroReal) {
-                        const nivel1NoTime = time.filter(j => j.rating === 1 && !j.isGoalkeeper && !j.isFake);
+                    var prioridades = [];
+                    
+                    if (rodada === 1) {
+                        prioridades = ['goleiro', 3, 2, 4, 1, 5];
+                    } else if (rodada === 2) {
+                        prioridades = [1, 2, 3, 4, 5];
+                    } else if (rodada === 3) {
+                        prioridades = [5, 4, 3, 2, 1];
+                    } else if (rodada === 4) {
+                        prioridades = [2, 3, 1, 4, 5];
+                    } else if (rodada === 5) {
+                        prioridades = [4, 3, 2, 5, 1];
+                    } else {
+                        var ciclo = ((rodada - 2) % 4) + 2;
+                        if (ciclo === 2) {
+                            prioridades = [1, 2, 3, 4, 5];
+                        } else if (ciclo === 3) {
+                            prioridades = [5, 4, 3, 2, 1];
+                        } else if (ciclo === 4) {
+                            prioridades = [2, 3, 1, 4, 5];
+                        } else if (ciclo === 5) {
+                            prioridades = [4, 3, 2, 5, 1];
+                        }
+                    }
+                    
+                    console.log('Prioridades: ' + prioridades.join(', '));
+                    
+                    var alguemRecebeuJogador = false;
+                    
+                    for (var timeIndex = 0; timeIndex < times.length; timeIndex++) {
+                        var time = times[timeIndex];
                         
-                        if (nivel1NoTime.length > 1) {
-                            // Converter jogador de nível 1 em goleiro improvisado
-                            const jogadorParaGoleiro = nivel1NoTime[0];
-                            const jogadorIndex = time.indexOf(jogadorParaGoleiro);
-                            time[jogadorIndex] = {
-                                ...jogadorParaGoleiro,
-                                isGoalkeeper: true,
-                                isMakeshift: true
-                            };
-                        } else {
-                            // Converter jogador fictício em goleiro fictício
-                            const jogadorFicticio = time.find(j => j.isFake && !j.isGoalkeeper);
-                            if (jogadorFicticio) {
-                                const fakeIndex = time.indexOf(jogadorFicticio);
-                                time[fakeIndex] = {
-                                    name: 'COMPLETE COM ALGUÉM',
-                                    rating: 3,
-                                    isGoalkeeper: true,
-                                    isFake: true
-                                };
-                            } else {
-                                // Converter qualquer jogador real em goleiro improvisado
-                                const jogadorReal = time.find(j => !j.isGoalkeeper && !j.isFake);
-                                if (jogadorReal) {
-                                    const jogadorIndex = time.indexOf(jogadorReal);
-                                    time[jogadorIndex] = {
-                                        ...jogadorReal,
+                        if (time.jogadores.length < playersPerTeam) {
+                            var jogador = pegarProximoJogador(prioridades);
+                            
+                            if (jogador) {
+                                if (rodada === 1 && !jogador.isGoalkeeper) {
+                                    jogador = {
+                                        name: jogador.name,
+                                        rating: jogador.rating,
                                         isGoalkeeper: true,
-                                        isMakeshift: true
+                                        isMakeshift: true,
+                                        isFake: jogador.isFake || false
                                     };
                                 }
+                                
+                                time.jogadores.push(jogador);
+                                alguemRecebeuJogador = true;
+                                
+                                var tipoJogador = jogador.isGoalkeeper ? 
+                                    (jogador.isMakeshift ? 'Goleiro Improvisado' : 'Goleiro') : 
+                                    'Nivel ' + jogador.rating;
+                                
+                                console.log('Time ' + time.id + ' recebeu: ' + jogador.name + ' (' + tipoJogador + ')');
                             }
                         }
                     }
+                    
+                    todosTimesCompletos = true;
+                    for (var i = 0; i < times.length; i++) {
+                        if (times[i].jogadores.length < playersPerTeam) {
+                            todosTimesCompletos = false;
+                            break;
+                        }
+                    }
+                    
+                    if (!alguemRecebeuJogador && !todosTimesCompletos) {
+                        console.log('AVISO: Nao ha mais jogadores disponiveis para distribuir');
+                        break;
+                    }
+                    
+                    rodada++;
                 }
                 
-                return times;
+                for (var i = 0; i < times.length; i++) {
+                    var time = times[i];
+                    while (time.jogadores.length < playersPerTeam) {
+                        var jogadorFicticio = {
+                            name: 'COMPLETE COM ALGUEM',
+                            rating: 3,
+                            isGoalkeeper: false,
+                            isFake: true
+                        };
+                        time.jogadores.push(jogadorFicticio);
+                        console.log('Time ' + time.id + ' completado com jogador ficticio');
+                    }
+                }
+                
+                console.log('=== DISTRIBUICAO FINAL ===');
+                for (var i = 0; i < times.length; i++) {
+                    var time = times[i];
+                    var niveis = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                    var somaRatings = 0;
+                    
+                    for (var j = 0; j < time.jogadores.length; j++) {
+                        var jogador = time.jogadores[j];
+                        niveis[jogador.rating]++;
+                        somaRatings += jogador.rating;
+                    }
+                    
+                    var media = (somaRatings / time.jogadores.length).toFixed(2);
+                    var distribuicaoTexto = '';
+                    for (var nivel = 1; nivel <= 5; nivel++) {
+                        if (niveis[nivel] > 0) {
+                            if (distribuicaoTexto !== '') distribuicaoTexto += ', ';
+                            distribuicaoTexto += 'N' + nivel + ':' + niveis[nivel];
+                        }
+                    }
+                    
+                    console.log('Time ' + time.id + ': ' + time.jogadores.length + ' jogadores, Media: ' + media + ', ' + distribuicaoTexto);
+                }
+                
+                console.log('--- VERIFICACAO DE EQUILIBRIO ---');
+                for (var nivel = 1; nivel <= 5; nivel++) {
+                    var countsPorTime = [];
+                    for (var i = 0; i < times.length; i++) {
+                        var count = 0;
+                        for (var j = 0; j < times[i].jogadores.length; j++) {
+                            if (times[i].jogadores[j].rating === nivel) {
+                                count++;
+                            }
+                        }
+                        countsPorTime.push(count);
+                    }
+                    
+                    var min = Math.min.apply(Math, countsPorTime);
+                    var max = Math.max.apply(Math, countsPorTime);
+                    var diferenca = max - min;
+                    var status = diferenca <= 1 ? 'OK' : 'ERRO';
+                    
+                    console.log('Nivel ' + nivel + ': Min=' + min + ', Max=' + max + ', Diferenca=' + diferenca + ' ' + status);
+                }
+                
+                var result = [];
+                for (var i = 0; i < times.length; i++) {
+                    result.push(times[i].jogadores);
+                }
+                return result;
             }
             
             function displayTeams(teams) {
                 teamsResult.innerHTML = '';
                 
-                teams.forEach((team, index) => {
-                    const teamCard = document.createElement('div');
+                for (var i = 0; i < teams.length; i++) {
+                    var team = teams[i];
+                    var teamCard = document.createElement('div');
                     teamCard.className = 'team-card';
                     
-                    const teamName = `Time ${index + 1}`;
-                    const teamAvg = (team.reduce((sum, player) => sum + player.rating, 0) / team.length).toFixed(1);
+                    var teamName = 'Time ' + (i + 1);
+                    var teamSum = 0;
+                    for (var j = 0; j < team.length; j++) {
+                        teamSum += team[j].rating;
+                    }
+                    var teamAvg = (teamSum / team.length).toFixed(1);
                     
-                    let teamContent = `
-                        <div class="team-header">
-                            <h3 class="team-name">${teamName}</h3>
-                            <div class="team-rating">Média: ${teamAvg}</div>
-                        </div>
-                    `;
+                    var nivelCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                    for (var j = 0; j < team.length; j++) {
+                        nivelCount[team[j].rating]++;
+                    }
                     
-                    // Ordenar jogadores - goleiros primeiro, depois por rating
-                    team.sort((a, b) => {
+                    var distribuicaoInfo = '';
+                    for (var nivel = 1; nivel <= 5; nivel++) {
+                        if (nivelCount[nivel] > 0) {
+                            if (distribuicaoInfo !== '') distribuicaoInfo += ' | ';
+                            distribuicaoInfo += 'N' + nivel + ':' + nivelCount[nivel];
+                        }
+                    }
+                    
+                    var teamContent = '<div class="team-header">';
+                    teamContent += '<h3 class="team-name">' + teamName + '</h3>';
+                    teamContent += '<div class="team-rating">Média: ' + teamAvg + '</div>';
+                    teamContent += '</div>';
+                    teamContent += '<div style="text-align: center; font-size: 12px; color: #666; margin-bottom: 10px;">' + distribuicaoInfo + '</div>';
+                    
+                    team.sort(function(a, b) {
                         if (a.isGoalkeeper && !b.isGoalkeeper) return -1;
                         if (!a.isGoalkeeper && b.isGoalkeeper) return 1;
                         return b.rating - a.rating;
@@ -1545,9 +1187,10 @@ Lucas"></textarea>
                     
                     teamContent += '<div class="team-players">';
                     
-                    team.forEach(player => {
-                        let playerClass = '';
-                        let playerDisplayName = player.name;
+                    for (var j = 0; j < team.length; j++) {
+                        var player = team[j];
+                        var playerClass = '';
+                        var playerDisplayName = player.name;
                         
                         if (player.isGoalkeeper) {
                             if (player.isMakeshift) {
@@ -1562,56 +1205,17 @@ Lucas"></textarea>
                             playerClass = 'fake-player';
                         }
                         
-                        teamContent += `
-                            <div class="player-item">
-                                <div class="player-item-name ${playerClass}">${playerDisplayName}</div>
-                                <div class="player-item-rating">${player.rating}</div>
-                            </div>
-                        `;
-                    });
+                        teamContent += '<div class="player-item">';
+                        teamContent += '<div class="player-item-name ' + playerClass + '">' + playerDisplayName + '</div>';
+                        teamContent += '<div class="player-item-rating">' + player.rating + '</div>';
+                        teamContent += '</div>';
+                    }
                     
                     teamContent += '</div>';
                     teamCard.innerHTML = teamContent;
                     teamsResult.appendChild(teamCard);
-                });
-            }
-            
-            // Eventos personalizados para o Google Analytics
-            function trackEvent(eventName, parameters = {}) {
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', eventName, parameters);
                 }
             }
-
-            // Rastrear quando usuário avança para etapa 2
-            goToStep2.addEventListener('click', function() {
-                trackEvent('step_completed', {
-                    'step_name': 'configuration',
-                    'game_type': gameTypeSelect.value,
-                    'num_teams': numTeamsSelect.value
-                });
-                
-                // Resto do código continua igual...
-            });
-
-            // Rastrear quando faz o sorteio
-            goToStep3.addEventListener('click', function() {
-                trackEvent('teams_generated', {
-                    'num_players': players.length,
-                    'num_teams': numTeamsSelect.value
-                });
-                
-                // Resto do código continua igual...
-            });
-
-            // Rastrear compartilhamento no WhatsApp
-            shareWhatsApp.addEventListener('click', function() {
-                trackEvent('share_whatsapp', {
-                    'num_teams': currentTeams.length
-                });
-                
-                // Resto do código continua igual...
-            });
         });
     </script>
 </body>
