@@ -959,6 +959,133 @@
             background-color: #c82333;
         }
 
+        .warning-modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .warning-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .warning-modal-header {
+            background: linear-gradient(135deg, var(--warning-color), #fd7e14);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #e0a800;
+        }
+
+        .warning-modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .warning-modal-body {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .warning-teams-list {
+            background-color: #fff3cd;
+            border: 2px solid var(--warning-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .warning-team-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffeaa7;
+        }
+
+        .warning-team-item:last-child {
+            border-bottom: none;
+        }
+
+        .warning-team-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .warning-team-count {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .warning-modal-footer {
+            padding: 20px 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+
+        .warning-modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .warning-continue-btn {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .warning-continue-btn:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .warning-cancel-btn {
+            background-color: var(--gray-color);
+            color: white;
+        }
+
+        .warning-cancel-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -2135,6 +2262,23 @@ Lucas"></textarea>
                     document.getElementById('cancelSwapBtn').addEventListener('click', function() {
                         closeSwapModal();
                     });
+
+                    document.getElementById('warningCancelBtn').addEventListener('click', function() {
+                        closeTeamWarningModal();
+                        // Manter modal de troca aberto para fazer ajustes
+                    });
+
+                    document.getElementById('warningContinueBtn').addEventListener('click', function() {
+                        forceCloseSwapModal();
+                    });
+
+                    // Fechar modal se clicar fora
+                    window.addEventListener('click', function(event) {
+                        var warningModal = document.getElementById('teamWarningModal');
+                        if (event.target === warningModal) {
+                            closeTeamWarningModal();
+                        }
+                    });
                     
                     populateNewPlayerTeamSelect();
                 }
@@ -2337,13 +2481,6 @@ Lucas"></textarea>
                     var sourceRealPlayers = sourceTeam.players.filter(function(p) { return !p.isFake; });
                     var minPlayers = gameTypeSelect.value === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
                     
-                    if (sourceRealPlayers.length <= minPlayers) {
-                        var confirmMove = confirm('ATENÇÃO: O time "' + sourceTeam.name + '" ficará com apenas ' + 
-                                                (sourceRealPlayers.length - 1) + ' jogadores (mínimo recomendado: ' + 
-                                                minPlayers + ').\n\nDeseja continuar mesmo assim?');
-                        if (!confirmMove) return;
-                    }
-                    
                     // Encontrar e remover jogador do time atual
                     var playerIndex = sourceTeam.players.findIndex(function(p) { return p.name === playerName; });
                     if (playerIndex === -1) return;
@@ -2403,12 +2540,59 @@ Lucas"></textarea>
                     
                     // Atualizar modal
                     populateAllTeamsForSwap();
-                    
-                    showCustomAlert('Jogador ' + playerName + ' movido para ' + targetTeamName);
                 }
 
                 function closeSwapModal() {
+                    // Verificar se há times com poucos jogadores antes de fechar
+                    var teamsWithFewPlayers = [];
+                    var minPlayers = gameTypeSelect.value === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+                    
+                    gameData.teams.forEach(function(team) {
+                        var realPlayers = team.players.filter(function(p) { return !p.isFake; });
+                        if (realPlayers.length < minPlayers) {
+                            teamsWithFewPlayers.push({
+                                name: team.name,
+                                playerCount: realPlayers.length,
+                                minPlayers: minPlayers
+                            });
+                        }
+                    });
+                    
+                    if (teamsWithFewPlayers.length > 0) {
+                        showTeamWarningModal(teamsWithFewPlayers);
+                    } else {
+                        // Fechar normalmente se todos os times estão OK
+                        document.getElementById('playerSwapModal').style.display = 'none';
+                    }
+                }
+
+                function showTeamWarningModal(teamsWithFewPlayers) {
+                    var warningModal = document.getElementById('teamWarningModal');
+                    var teamsList = document.getElementById('warningTeamsList');
+                    
+                    teamsList.innerHTML = '';
+                    
+                    teamsWithFewPlayers.forEach(function(team) {
+                        var teamItem = document.createElement('div');
+                        teamItem.className = 'warning-team-item';
+                        
+                        teamItem.innerHTML = 
+                            '<span class="warning-team-name">' + team.name + '</span>' +
+                            '<span class="warning-team-count">' + team.playerCount + '/' + team.minPlayers + ' jogadores</span>';
+                        
+                        teamsList.appendChild(teamItem);
+                    });
+                    
+                    warningModal.style.display = 'block';
+                }
+
+                function closeTeamWarningModal() {
+                    document.getElementById('teamWarningModal').style.display = 'none';
+                }
+
+                function forceCloseSwapModal() {
                     document.getElementById('playerSwapModal').style.display = 'none';
+                    closeTeamWarningModal();
                 }
 	
 	            function setupGoalModal() {
@@ -2802,12 +2986,12 @@ Lucas"></textarea>
                 }
 	            
 	            function updatePlayerGoals(playerName) {
-	                var playerGoalSpan = document.getElementById('goals-' + playerName.replace(/\s+/g, ''));
-	                if (playerGoalSpan) {
-	                    var currentGoals = parseInt(playerGoalSpan.textContent) || 0;
-	                    playerGoalSpan.textContent = currentGoals + 1;
-	                }
-	            }
+                    var playerGoalSpan = document.getElementById('goals-' + playerName.replace(/\s+/g, ''));
+                    if (playerGoalSpan) {
+                        var currentGoals = parseInt(playerGoalSpan.textContent) || 0;
+                        playerGoalSpan.textContent = currentGoals + 1;
+                    }
+                }
 	            
 	            function endMatch(reason) {
 	                pauseTimer();
@@ -2854,17 +3038,31 @@ Lucas"></textarea>
                 if (!gameData.tournamentStats.playerGoals) {
                     gameData.tournamentStats.playerGoals = {};
                 }
+                if (!gameData.tournamentStats.playerOwnGoals) {
+                    gameData.tournamentStats.playerOwnGoals = {};
+                }
                 if (!gameData.tournamentStats.playerAssists) {
                     gameData.tournamentStats.playerAssists = {};
                 }
                 
                 match.goals.forEach(function(goal) {
-                    if (!gameData.tournamentStats.playerGoals[goal.player]) {
-                        gameData.tournamentStats.playerGoals[goal.player] = 0;
+                    // Separar gols normais de gols contra
+                    if (goal.type === 'own') {
+                        // Gol contra - não conta na artilharia
+                        if (!gameData.tournamentStats.playerOwnGoals[goal.player]) {
+                            gameData.tournamentStats.playerOwnGoals[goal.player] = 0;
+                        }
+                        gameData.tournamentStats.playerOwnGoals[goal.player]++;
+                    } else {
+                        // Gol normal - conta na artilharia
+                        if (!gameData.tournamentStats.playerGoals[goal.player]) {
+                            gameData.tournamentStats.playerGoals[goal.player] = 0;
+                        }
+                        gameData.tournamentStats.playerGoals[goal.player]++;
                     }
-                    gameData.tournamentStats.playerGoals[goal.player]++;
                     
-                    if (goal.assist) {
+                    // Assistências (só para gols normais)
+                    if (goal.assist && goal.type !== 'own') {
                         if (!gameData.tournamentStats.playerAssists[goal.assist]) {
                             gameData.tournamentStats.playerAssists[goal.assist] = 0;
                         }
@@ -2954,22 +3152,52 @@ Lucas"></textarea>
 	                });
 	                
 	                if (gameData.tournamentStats.playerGoals) {
-	                    var topScorers = Object.keys(gameData.tournamentStats.playerGoals)
-	                        .map(function(player) {
-	                            return { 
-	                                name: player, 
-	                                goals: gameData.tournamentStats.playerGoals[player] 
-	                            };
-	                        })
-	                        .sort(function(a, b) { return b.goals - a.goals; });
-	                    
-	                    report += '\n⚽ ARTILHEIROS:\n';
-	                    topScorers.slice(0, 5).forEach(function(scorer, index) {
-	                        report += (index + 1) + 'º ' + scorer.name + ' - ' + scorer.goals + ' gol';
-	                        if (scorer.goals !== 1) report += 's';
-	                        report += '\n';
-	                    });
-	                }
+                        var topScorers = Object.keys(gameData.tournamentStats.playerGoals)
+                            .map(function(player) {
+                                return { 
+                                    name: player, 
+                                    goals: gameData.tournamentStats.playerGoals[player] 
+                                };
+                            })
+                            .sort(function(a, b) { return b.goals - a.goals; });
+                        
+                        report += '\n⚽ ARTILHEIROS:\n';
+                        topScorers.forEach(function(scorer, index) {
+                            report += (index + 1) + 'º ' + scorer.name + ' - ' + scorer.goals + ' gol';
+                            if (scorer.goals !== 1) report += 's';
+                            
+                            // Verificar se o jogador também tem gols contra
+                            var ownGoals = gameData.tournamentStats.playerOwnGoals[scorer.name] || 0;
+                            if (ownGoals > 0) {
+                                report += ' (e ' + ownGoals + ' contra)';
+                            }
+                            
+                            report += '\n';
+                        });
+                    }
+
+                    if (gameData.tournamentStats.playerOwnGoals) {
+                        var playersOnlyOwnGoals = Object.keys(gameData.tournamentStats.playerOwnGoals)
+                            .filter(function(player) {
+                                return !gameData.tournamentStats.playerGoals[player]; // Só gols contra, nenhum gol normal
+                            })
+                            .map(function(player) {
+                                return {
+                                    name: player,
+                                    ownGoals: gameData.tournamentStats.playerOwnGoals[player]
+                                };
+                            })
+                            .sort(function(a, b) { return b.ownGoals - a.ownGoals; });
+                        
+                        if (playersOnlyOwnGoals.length > 0) {
+                            report += '\n🚫 GOLS CONTRA:\n';
+                            playersOnlyOwnGoals.forEach(function(player, index) {
+                                report += (index + 1) + 'º ' + player.name + ' - ' + player.ownGoals + ' gol';
+                                if (player.ownGoals !== 1) report += 's';
+                                report += ' contra\n';
+                            });
+                        }
+                    }
 	                
 	                if (gameData.tournamentStats.playerAssists) {
 	                    var topAssisters = Object.keys(gameData.tournamentStats.playerAssists)
@@ -2983,7 +3211,7 @@ Lucas"></textarea>
 	                    
 	                    if (topAssisters.length > 0) {
 	                        report += '\n🅰️ ASSISTÊNCIAS:\n';
-	                        topAssisters.slice(0, 5).forEach(function(assister, index) {
+	                        topAssisters.forEach(function(assister, index) {
                             report += (index + 1) + 'º ' + assister.name + ' - ' + assister.assists + ' assist';
                             if (assister.assists !== 1) report += 's';
                             report += '\n';
@@ -3042,6 +3270,9 @@ Lucas"></textarea>
             }
             window.movePlayerToTeamFree = movePlayerToTeamFree;
             window.deletePlayerFromTeam = deletePlayerFromTeam;
+            window.showTeamWarningModal = showTeamWarningModal;
+            window.closeTeamWarningModal = closeTeamWarningModal;
+            window.forceCloseSwapModal = forceCloseSwapModal;
         });
     </script>
     <!-- Modal de Troca de Jogadores -->
@@ -3054,6 +3285,30 @@ Lucas"></textarea>
             
             <div style="text-align: center; margin-top: 20px;">
                 <button class="goal-modal-btn cancel" id="cancelSwapBtn" style="width: 200px;">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal de Aviso para Times com Poucos Jogadores -->
+    <div id="teamWarningModal" class="warning-modal">
+        <div class="warning-modal-content">
+            <div class="warning-modal-header">
+                <h3>⚠️ Times com Poucos Jogadores</h3>
+            </div>
+            <div class="warning-modal-body">
+                <p>Os seguintes times estão com menos jogadores do que o recomendado:</p>
+                <div id="warningTeamsList" class="warning-teams-list"></div>
+                <p><strong>Deseja continuar mesmo assim?</strong></p>
+                <p style="font-size: 14px; color: #666; margin-top: 15px;">
+                    Você pode adicionar mais jogadores ou fazer ajustes antes de fechar.
+                </p>
+            </div>
+            <div class="warning-modal-footer">
+                <button class="warning-modal-btn warning-cancel-btn" id="warningCancelBtn">
+                    🔧 Fazer Ajustes
+                </button>
+                <button class="warning-modal-btn warning-continue-btn" id="warningContinueBtn">
+                    ✅ Continuar Assim
+                </button>
             </div>
         </div>
     </div>
