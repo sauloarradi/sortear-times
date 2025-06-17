@@ -858,14 +858,41 @@
         }
 
         .swap-modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 700px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
+	    background-color: white;
+	    margin: 2% auto;
+	    padding: 20px;
+	    border-radius: 10px;
+	    width: 95%;
+	    max-width: 900px;
+	    max-height: 90vh;
+	    overflow-y: auto;
+	    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	    position: relative;
+	}
+
+	.swap-teams-grid {
+	    max-height: 70vh;
+	    overflow-y: auto;
+	    padding-right: 10px;
+	}
+	
+	.swap-teams-grid::-webkit-scrollbar {
+	    width: 8px;
+	}
+	
+	.swap-teams-grid::-webkit-scrollbar-track {
+	    background: #f1f1f1;
+	    border-radius: 4px;
+	}
+	
+	.swap-teams-grid::-webkit-scrollbar-thumb {
+	    background: #c1c1c1;
+	    border-radius: 4px;
+	}
+	
+	.swap-teams-grid::-webkit-scrollbar-thumb:hover {
+	    background: #a1a1a1;
+	}
 
         .swap-teams {
             display: grid;
@@ -1170,6 +1197,18 @@
             .goal-modal-teams {
                 grid-template-columns: 1fr;
             }
+
+	    .swap-modal-content {
+	        margin: 1% auto;
+	        width: 98%;
+	        max-height: 95vh;
+		padding: 15px;
+	     }
+		
+	    .swap-teams-grid {
+	       grid-template-columns: 1fr;
+	       max-height: 75vh;
+	    }
         }
     </style>
 </head>
