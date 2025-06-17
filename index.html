@@ -2377,10 +2377,21 @@ Lucas"></textarea>
                     
                     team.players.push(newPlayer);
                     
+                    // Atualizar selects
+                    updateTeamSelectsWithCurrentData();
+
+                    // Se há uma partida em andamento e o jogador foi adicionado a um dos times da partida
                     if (gameData.currentMatch && (gameData.currentMatch.team1.id === teamId || gameData.currentMatch.team2.id === teamId)) {
+                        // Atualizar os dados da partida atual
+                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
+                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
+                        
+                        if (updatedTeam1) gameData.currentMatch.team1 = updatedTeam1;
+                        if (updatedTeam2) gameData.currentMatch.team2 = updatedTeam2;
+                        
                         populatePlayersList();
                     }
-                    
+
                     closeAddPlayerSection();
                     showCustomAlert('Jogador ' + name + ' adicionado ao time ' + team.name + '!');
                 }
@@ -2504,8 +2515,26 @@ Lucas"></textarea>
                         }
                     }
                     
-                    // Atualizar modal
+                    // Atualizar todas as interfaces
                     populateAllTeamsForSwap();
+                    updateTeamSelectsWithCurrentData();
+
+                    // Se há uma partida em andamento, atualizar também a interface da partida
+                    if (gameData.currentMatch) {
+                        // Atualizar os dados da partida atual com os times modificados
+                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
+                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
+                        
+                        if (updatedTeam1) {
+                            gameData.currentMatch.team1 = updatedTeam1;
+                        }
+                        if (updatedTeam2) {
+                            gameData.currentMatch.team2 = updatedTeam2;
+                        }
+                        
+                        // Repovoar a lista de jogadores na interface da partida
+                        populatePlayersList();
+                    }
                     
                     showCustomAlert('Jogador ' + playerName + ' foi deletado do time ' + teamName);
                 }
@@ -2579,6 +2608,24 @@ Lucas"></textarea>
                     
                     // Atualizar modal
                     populateAllTeamsForSwap();
+                    updateTeamSelectsWithCurrentData();
+
+                    // Se há uma partida em andamento, atualizar também a interface da partida
+                    if (gameData.currentMatch) {
+                        // Atualizar os dados da partida atual com os times modificados
+                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
+                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
+                        
+                        if (updatedTeam1) {
+                            gameData.currentMatch.team1 = updatedTeam1;
+                        }
+                        if (updatedTeam2) {
+                            gameData.currentMatch.team2 = updatedTeam2;
+                        }
+                        
+                        // Repovoar a lista de jogadores na interface da partida
+                        populatePlayersList();
+                    }
                 }
 
                 function closeSwapModal() {
@@ -2822,6 +2869,47 @@ Lucas"></textarea>
                     team2Select.value = gameData.teams[1].id;
                 }
             }
+
+	    function updateTeamSelectsWithCurrentData() {
+		    var team1Select = document.getElementById('team1Select');
+		    var team2Select = document.getElementById('team2Select');
+		    var newPlayerTeamSelect = document.getElementById('newPlayerTeam');
+		    
+		    // Salvar seleções atuais
+		    var team1SelectedValue = team1Select.value;
+		    var team2SelectedValue = team2Select.value;
+		    var newPlayerSelectedValue = newPlayerTeamSelect.value;
+		    
+		    // Limpar e repovoar team selects
+		    team1Select.innerHTML = '';
+		    team2Select.innerHTML = '';
+		    newPlayerTeamSelect.innerHTML = '<option value="">Selecione o time</option>';
+		    
+		    gameData.teams.forEach(function(team) {
+              // Team1 select
+              var option1 = document.createElement('option');
+                option1.value = team.id;
+                option1.textContent = team.name;
+                team1Select.appendChild(option1);
+                
+                // Team2 select
+                var option2 = document.createElement('option');
+                option2.value = team.id;
+                option2.textContent = team.name;
+                team2Select.appendChild(option2);
+                
+                // New player team select
+                var option3 = document.createElement('option');
+                option3.value = team.id;
+                option3.textContent = team.name;
+                newPlayerTeamSelect.appendChild(option3);
+		    });
+		    
+		    // Restaurar seleções se ainda válidas
+		    if (team1SelectedValue) team1Select.value = team1SelectedValue;
+		    if (team2SelectedValue) team2Select.value = team2SelectedValue;
+		    if (newPlayerSelectedValue) newPlayerTeamSelect.value = newPlayerSelectedValue;
+	    }
             
             function resetGameInterface() {
                 document.getElementById('gameConfigSection').style.display = 'block';
