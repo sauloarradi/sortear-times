@@ -1093,153 +1093,6 @@
             min-width: 120px;
         }
 
-        .restore-modal {
-            display: none;
-            position: fixed;
-            z-index: 1100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .restore-modal-content {
-            background-color: white;
-            margin: 8% auto;
-            padding: 0;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        .restore-modal-header {
-            background: linear-gradient(135deg, #198754, #20c997);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .restore-modal-header h3 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        .restore-modal-body {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .restore-info {
-            background-color: #e7f3ff;
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: left;
-        }
-
-        .restore-modal-footer {
-            padding: 20px 25px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            background-color: #f8f9fa;
-        }
-
-        .restore-modal-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-width: 120px;
-        }
-
-        .restore-continue-btn {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .restore-continue-btn:hover {
-            background-color: #157347;
-            transform: translateY(-2px);
-        }
-
-        .restore-new-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .restore-new-btn:hover {
-            background-color: #0b5ed7;
-            transform: translateY(-2px);
-        }
-
-        .auto-save-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1000;
-        }
-
-        .auto-save-indicator.show {
-            opacity: 1;
-        }
-
-        .backup-section {
-            background-color: #fff3cd;
-            border: 2px solid var(--warning-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .backup-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .backup-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .export-btn {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .import-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
         .warning-continue-btn {
             background-color: var(--warning-color);
             color: var(--dark-color);
@@ -1486,15 +1339,6 @@ Lucas"></textarea>
                 <p>Os times foram sorteados de forma equilibrada com base nas qualificações.</p>
 
                 <div id="teamsResult"></div>
-
-                <div class="backup-section">
-                    <h4>💾 Backup de Segurança</h4>
-                    <p>Salve seus dados para não perder o progresso do torneio!</p>
-                    <div class="backup-buttons">
-                        <button id="exportBtn" class="backup-btn export-btn">📤 Baixar Backup</button>
-                        <button id="importBtn" class="backup-btn import-btn">📥 Carregar Backup</button>
-                    </div>
-                </div>
 
                 <div class="btn-container">
                     <button class="btn-back" id="backToStep3">Voltar</button>
@@ -1762,33 +1606,6 @@ Lucas"></textarea>
 	                goalLimit: 2,
 	                tournamentStats: {}
 	            };
-
-                // ===== EVENT LISTENERS PARA PERSISTÊNCIA =====
-
-                // Carregar dados salvos ao iniciar
-                if (!loadSavedData()) {
-                    // Se não há dados salvos, continuar normalmente
-                }
-
-                // Proteção contra saída acidental
-                window.addEventListener('beforeunload', function(e) {
-                    if (gameData.teams.length > 0 || gameData.matches.length > 0 || currentTeams.length > 0) {
-                        var message = 'Você tem um torneio em andamento. Tem certeza que deseja sair?';
-                        e.returnValue = message;
-                        return message;
-                    }
-                });
-
-                // Event listeners para backup (serão executados quando elementos existirem)
-                setTimeout(function() {
-                    var exportBtn = document.getElementById('exportBtn');
-                    var importBtn = document.getElementById('importBtn');
-                    var fileInput = document.getElementById('fileInput');
-                    
-                    if (exportBtn) exportBtn.addEventListener('click', exportData);
-                    if (importBtn) importBtn.addEventListener('click', importData);
-                    if (fileInput) fileInput.addEventListener('change', handleFileImport);
-                }, 1000);
 	
 	            function updatePlayerCounter() {
 	                var playerNames = playersInput.value.split('\n').filter(function(name) {
@@ -2289,61 +2106,60 @@ Lucas"></textarea>
 	            };
 	
 	            goToStep2.addEventListener('click', function() {
-                    var gameType = gameTypeSelect.value;
-                    var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                    
-                    var playerNames = playersInput.value.split('\n').filter(function(name) {
-                        return name.trim() !== '';
-                    });
-                    
-                    if (playerNames.length === 0) {
-                        showCustomAlert('Por favor, adicione pelo menos um jogador na lista!');
-                        return;
-                    }
-                    
-                    if (playerNames.length < playersPerTeam) {
-                        showCustomAlert('Por favor, adicione pelo menos ' + playersPerTeam + ' jogadores!');
-                        return;
-                    }
-                    
-                    if (!validatePlayerCountAtStep1(playerNames)) {
-                        return;
-                    }
-                    
-                    saveCurrentRatings();
-                    playersList.innerHTML = '';
-                    
-                    for (var i = 0; i < playerNames.length; i++) {
-                        var name = playerNames[i];
-                        var playerCard = document.createElement('div');
-                        playerCard.className = 'player-card';
-                        
-                        var ratingOptions = '';
-                        for (var j = 1; j <= 5; j++) {
-                            var checked = j === 3 ? 'checked' : '';
-                            ratingOptions += '<label class="rating-option">';
-                            ratingOptions += '<input type="radio" name="rating_' + i + '" value="' + j + '" ' + checked + '>';
-                            ratingOptions += j;
-                            ratingOptions += '</label>';
-                        }
-                        
-                        playerCard.innerHTML = '<div class="player-name">' + name.trim() + '</div>' +
-                            '<div class="player-ratings">' +
-                            '<div class="rating-options">' + ratingOptions + '</div>' +
-                            '<div class="goalkeeper-checkbox">' +
-                            '<label><input type="checkbox" name="goalkeeper_' + i + '"> Goleiro</label>' +
-                            '</div></div>';
-                        
-                        playersList.appendChild(playerCard);
-                    }
-                    
-                    if (hasAnyRatings()) {
-                        restoreSavedRatings();
-                    }
-                    
-                    showStep(2);
-                    autoSave(); // <<<< ADICIONAR ESTA LINHA
-                });
+	                var gameType = gameTypeSelect.value;
+	                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
+	                
+	                var playerNames = playersInput.value.split('\n').filter(function(name) {
+	                    return name.trim() !== '';
+	                });
+	                
+	                if (playerNames.length === 0) {
+	                    showCustomAlert('Por favor, adicione pelo menos um jogador na lista!');
+	                    return;
+	                }
+	                
+	                if (playerNames.length < playersPerTeam) {
+	                    showCustomAlert('Por favor, adicione pelo menos ' + playersPerTeam + ' jogadores!');
+	                    return;
+	                }
+	                
+	                if (!validatePlayerCountAtStep1(playerNames)) {
+	                    return;
+	                }
+	                
+	                saveCurrentRatings();
+	                playersList.innerHTML = '';
+	                
+	                for (var i = 0; i < playerNames.length; i++) {
+	                    var name = playerNames[i];
+	                    var playerCard = document.createElement('div');
+	                    playerCard.className = 'player-card';
+	                    
+	                    var ratingOptions = '';
+	                    for (var j = 1; j <= 5; j++) {
+	                        var checked = j === 3 ? 'checked' : '';
+	                        ratingOptions += '<label class="rating-option">';
+	                        ratingOptions += '<input type="radio" name="rating_' + i + '" value="' + j + '" ' + checked + '>';
+	                        ratingOptions += j;
+	                        ratingOptions += '</label>';
+	                    }
+	                    
+	                    playerCard.innerHTML = '<div class="player-name">' + name.trim() + '</div>' +
+	                        '<div class="player-ratings">' +
+	                        '<div class="rating-options">' + ratingOptions + '</div>' +
+	                        '<div class="goalkeeper-checkbox">' +
+	                        '<label><input type="checkbox" name="goalkeeper_' + i + '"> Goleiro</label>' +
+	                        '</div></div>';
+	                    
+	                    playersList.appendChild(playerCard);
+	                }
+	                
+	                if (hasAnyRatings()) {
+	                    restoreSavedRatings();
+	                }
+	                
+	                showStep(2);
+	            });
 	
 	            goToStep3.addEventListener('click', function() {
 	                var playerCards = playersList.querySelectorAll('.player-card');
@@ -2372,7 +2188,6 @@ Lucas"></textarea>
 	                currentTeams = teams;
 	                setupTeamNaming(teams);
 	                showStep(3);
-                    autoSave();
 	            });
 	
 	            goToStep4.addEventListener('click', function() {
@@ -2393,7 +2208,6 @@ Lucas"></textarea>
 	                }
 	                
 	                showStep(1);
-                    autoSave();
 	            });
 	            
 	            document.getElementById('keepRatingsBtn').addEventListener('click', function() {
@@ -2563,21 +2377,10 @@ Lucas"></textarea>
                     
                     team.players.push(newPlayer);
                     
-                    // Atualizar selects
-                    updateTeamSelectsWithCurrentData();
-
-                    // Se há uma partida em andamento e o jogador foi adicionado a um dos times da partida
                     if (gameData.currentMatch && (gameData.currentMatch.team1.id === teamId || gameData.currentMatch.team2.id === teamId)) {
-                        // Atualizar os dados da partida atual
-                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
-                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
-                        
-                        if (updatedTeam1) gameData.currentMatch.team1 = updatedTeam1;
-                        if (updatedTeam2) gameData.currentMatch.team2 = updatedTeam2;
-                        
                         populatePlayersList();
                     }
-
+                    
                     closeAddPlayerSection();
                     showCustomAlert('Jogador ' + name + ' adicionado ao time ' + team.name + '!');
                 }
@@ -2701,26 +2504,8 @@ Lucas"></textarea>
                         }
                     }
                     
-                    // Atualizar todas as interfaces
+                    // Atualizar modal
                     populateAllTeamsForSwap();
-                    updateTeamSelectsWithCurrentData();
-
-                    // Se há uma partida em andamento, atualizar também a interface da partida
-                    if (gameData.currentMatch) {
-                        // Atualizar os dados da partida atual com os times modificados
-                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
-                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
-                        
-                        if (updatedTeam1) {
-                            gameData.currentMatch.team1 = updatedTeam1;
-                        }
-                        if (updatedTeam2) {
-                            gameData.currentMatch.team2 = updatedTeam2;
-                        }
-                        
-                        // Repovoar a lista de jogadores na interface da partida
-                        populatePlayersList();
-                    }
                     
                     showCustomAlert('Jogador ' + playerName + ' foi deletado do time ' + teamName);
                 }
@@ -2794,24 +2579,6 @@ Lucas"></textarea>
                     
                     // Atualizar modal
                     populateAllTeamsForSwap();
-                    updateTeamSelectsWithCurrentData();
-
-                    // Se há uma partida em andamento, atualizar também a interface da partida
-                    if (gameData.currentMatch) {
-                        // Atualizar os dados da partida atual com os times modificados
-                        var updatedTeam1 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team1.id; });
-                        var updatedTeam2 = gameData.teams.find(function(t) { return t.id === gameData.currentMatch.team2.id; });
-                        
-                        if (updatedTeam1) {
-                            gameData.currentMatch.team1 = updatedTeam1;
-                        }
-                        if (updatedTeam2) {
-                            gameData.currentMatch.team2 = updatedTeam2;
-                        }
-                        
-                        // Repovoar a lista de jogadores na interface da partida
-                        populatePlayersList();
-                    }
                 }
 
                 function closeSwapModal() {
@@ -3055,61 +2822,20 @@ Lucas"></textarea>
                     team2Select.value = gameData.teams[1].id;
                 }
             }
-
-			function updateTeamSelectsWithCurrentData() {
-				var team1Select = document.getElementById('team1Select');
-				var team2Select = document.getElementById('team2Select');
-				var newPlayerTeamSelect = document.getElementById('newPlayerTeam');
-				
-				// Salvar seleções atuais
-				var team1SelectedValue = team1Select.value;
-				var team2SelectedValue = team2Select.value;
-				var newPlayerSelectedValue = newPlayerTeamSelect.value;
-				
-				// Limpar e repovoar team selects
-				team1Select.innerHTML = '';
-				team2Select.innerHTML = '';
-				newPlayerTeamSelect.innerHTML = '<option value="">Selecione o time</option>';
-				
-				gameData.teams.forEach(function(team) {
-				  // Team1 select
-				  var option1 = document.createElement('option');
-					option1.value = team.id;
-					option1.textContent = team.name;
-					team1Select.appendChild(option1);
-					
-					// Team2 select
-					var option2 = document.createElement('option');
-					option2.value = team.id;
-					option2.textContent = team.name;
-					team2Select.appendChild(option2);
-					
-					// New player team select
-					var option3 = document.createElement('option');
-					option3.value = team.id;
-					option3.textContent = team.name;
-					newPlayerTeamSelect.appendChild(option3);
-				});
-				
-					// Restaurar seleções se ainda válidas
-					if (team1SelectedValue) team1Select.value = team1SelectedValue;
-					if (team2SelectedValue) team2Select.value = team2SelectedValue;
-					if (newPlayerSelectedValue) newPlayerTeamSelect.value = newPlayerSelectedValue;
-				}
             
-				function resetGameInterface() {
-					document.getElementById('gameConfigSection').style.display = 'block';
-					document.getElementById('playerManagementSection').style.display = 'none';
-					document.getElementById('gamePlaySection').style.display = 'none';
-					document.getElementById('gameResultSection').style.display = 'none';
-					document.getElementById('gameBackBtn').style.display = 'none';
-					
-					resetTimer();
-					
-					document.getElementById('team1Score').textContent = '0';
-					document.getElementById('team2Score').textContent = '0';
-					document.getElementById('goalsList').innerHTML = '';
-				}
+            function resetGameInterface() {
+                document.getElementById('gameConfigSection').style.display = 'block';
+                document.getElementById('playerManagementSection').style.display = 'none';
+                document.getElementById('gamePlaySection').style.display = 'none';
+                document.getElementById('gameResultSection').style.display = 'none';
+                document.getElementById('gameBackBtn').style.display = 'none';
+                
+                resetTimer();
+                
+                document.getElementById('team1Score').textContent = '0';
+                document.getElementById('team2Score').textContent = '0';
+                document.getElementById('goalsList').innerHTML = '';
+            }
 	            
 	            document.getElementById('gameMode').addEventListener('change', function() {
 	                var timedOptions = document.getElementById('timedGameOptions');
@@ -3531,194 +3257,6 @@ Lucas"></textarea>
                         });
                     }
                 }
-
-                // ===== SISTEMA DE PERSISTÊNCIA =====
-
-                function autoSave() {
-                    if (gameData.teams.length > 0 || gameData.matches.length > 0 || currentTeams.length > 0) {
-                        var saveData = {
-                            gameData: gameData,
-                            currentTeams: currentTeams,
-                            teamNames: teamNames,
-                            savedRatings: savedRatings,
-                            currentStep: getCurrentStep(),
-                            timestamp: new Date().toISOString(),
-                            version: '1.0'
-                        };
-                        
-                        localStorage.setItem('futsalTournament', JSON.stringify(saveData));
-                        showAutoSaveIndicator();
-                    }
-                }
-
-                function getCurrentStep() {
-                    for (var i = 1; i <= 5; i++) {
-                        if (document.getElementById('step' + i).classList.contains('active')) {
-                            return i;
-                        }
-                    }
-                    return 1;
-                }
-
-                function showAutoSaveIndicator() {
-                    var indicator = document.getElementById('autoSaveIndicator');
-                    indicator.classList.add('show');
-                    setTimeout(function() {
-                        indicator.classList.remove('show');
-                    }, 2000);
-                }
-
-                function loadSavedData() {
-                    var saved = localStorage.getItem('futsalTournament');
-                    if (saved) {
-                        try {
-                            var saveData = JSON.parse(saved);
-                            if (saveData.gameData || saveData.currentTeams) {
-                                showRestoreModal(saveData);
-                                return true;
-                            }
-                        } catch (e) {
-                            console.error('Erro ao carregar dados salvos:', e);
-                            localStorage.removeItem('futsalTournament');
-                        }
-                    }
-                    return false;
-                }
-
-                function showRestoreModal(saveData) {
-                    var modal = document.getElementById('restoreModal');
-                    var restoreInfo = document.getElementById('restoreInfo');
-                    
-                    var date = new Date(saveData.timestamp);
-                    var dateStr = date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR');
-                    
-                    var info = '<strong>Data:</strong> ' + dateStr + '<br>';
-                    info += '<strong>Times:</strong> ' + (saveData.currentTeams ? saveData.currentTeams.length : 0) + '<br>';
-                    info += '<strong>Partidas:</strong> ' + (saveData.gameData.matches ? saveData.gameData.matches.length : 0) + '<br>';
-                    info += '<strong>Etapa:</strong> ' + getStepName(saveData.currentStep);
-                    
-                    restoreInfo.innerHTML = info;
-                    modal.style.display = 'block';
-                    
-                    // Event listeners para os botões
-                    document.getElementById('continueBtn').onclick = function() {
-                        restoreSavedData(saveData);
-                        modal.style.display = 'none';
-                    };
-                    
-                    document.getElementById('newTournamentBtn').onclick = function() {
-                        clearSavedData();
-                        modal.style.display = 'none';
-                    };
-                }
-
-                function getStepName(step) {
-                    var names = {
-                        1: 'Configurações',
-                        2: 'Qualificação',
-                        3: 'Nomeação de Times',
-                        4: 'Times Sorteados',
-                        5: 'Administração de Jogos'
-                    };
-                    return names[step] || 'Desconhecida';
-                }
-
-                function restoreSavedData(saveData) {
-                    // Restaurar dados
-                    if (saveData.gameData) gameData = saveData.gameData;
-                    if (saveData.currentTeams) currentTeams = saveData.currentTeams;
-                    if (saveData.teamNames) teamNames = saveData.teamNames;
-                    if (saveData.savedRatings) savedRatings = saveData.savedRatings;
-                    
-                    // Restaurar interface baseada na etapa
-                    if (saveData.currentStep >= 2 && saveData.currentTeams) {
-                        // Restaurar lista de jogadores no textarea
-                        var playerNames = [];
-                        for (var i = 0; i < saveData.currentTeams.length; i++) {
-                            var team = saveData.currentTeams[i];
-                            for (var j = 0; j < team.length; j++) {
-                                if (!team[j].isFake && playerNames.indexOf(team[j].name) === -1) {
-                                    playerNames.push(team[j].name);
-                                }
-                            }
-                        }
-                        document.getElementById('playersInput').value = playerNames.join('\n');
-                        updatePlayerCounter();
-                    }
-                    
-                    if (saveData.currentStep >= 4) {
-                        displayTeams(currentTeams);
-                    }
-                    
-                    if (saveData.currentStep === 5) {
-                        initializeGameSystem();
-                    }
-                    
-                    // Ir para a etapa correta
-                    showStep(saveData.currentStep);
-                    
-                    showCustomAlert('Torneio restaurado com sucesso!');
-                }
-
-                function clearSavedData() {
-                    localStorage.removeItem('futsalTournament');
-                    showCustomAlert('Dados limpos. Iniciando novo torneio!');
-                }
-
-                function exportData() {
-                    if (gameData.teams.length === 0 && currentTeams.length === 0) {
-                        showCustomAlert('Não há dados para exportar!');
-                        return;
-                    }
-                    
-                    var exportData = {
-                        gameData: gameData,
-                        currentTeams: currentTeams,
-                        teamNames: teamNames,
-                        savedRatings: savedRatings,
-                        currentStep: getCurrentStep(),
-                        timestamp: new Date().toISOString(),
-                        version: '1.0'
-                    };
-                    
-                    var dataStr = JSON.stringify(exportData, null, 2);
-                    var dataBlob = new Blob([dataStr], {type: 'application/json'});
-                    
-                    var link = document.createElement('a');
-                    link.href = URL.createObjectURL(dataBlob);
-                    link.download = 'torneio-futsal-' + new Date().toISOString().slice(0,10) + '.json';
-                    link.click();
-                    
-                    showCustomAlert('Backup baixado com sucesso!');
-                }
-
-                function importData() {
-                    document.getElementById('fileInput').click();
-                }
-
-                function handleFileImport(event) {
-                    var file = event.target.files[0];
-                    if (!file) return;
-                    
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            var importedData = JSON.parse(e.target.result);
-                            
-                            if (importedData.version && (importedData.gameData || importedData.currentTeams)) {
-                                showRestoreModal(importedData);
-                            } else {
-                                showCustomAlert('Arquivo inválido! Use apenas backups gerados por este sistema.');
-                            }
-                        } catch (error) {
-                            showCustomAlert('Erro ao ler arquivo! Verifique se é um backup válido.');
-                        }
-                    };
-                    reader.readAsText(file);
-                    
-                    // Limpar input para permitir import do mesmo arquivo novamente
-                    event.target.value = '';
-                }
                 
                 if (gameData.matches.length > 0) {
                     report += '\n📋 HISTÓRICO DE JOGOS:\n';
@@ -3774,231 +3312,6 @@ Lucas"></textarea>
             window.showTeamWarningModal = showTeamWarningModal;
             window.closeTeamWarningModal = closeTeamWarningModal;
             window.forceCloseSwapModal = forceCloseSwapModal;
-
-            // ===== EVENT LISTENERS PARA PERSISTÊNCIA =====
-
-            // Carregar dados salvos ao iniciar
-            if (!loadSavedData()) {
-                // Se não há dados salvos, continuar normalmente
-            }
-
-            // Auto-save em pontos críticos
-            goToStep2.addEventListener('click', function() {
-                var gameType = gameTypeSelect.value;
-                var playersPerTeam = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                
-                var playerNames = playersInput.value.split('\n').filter(function(name) {
-                    return name.trim() !== '';
-                });
-                
-                if (playerNames.length === 0) {
-                    showCustomAlert('Por favor, adicione pelo menos um jogador na lista!');
-                    return;
-                }
-                
-                if (playerNames.length < playersPerTeam) {
-                    showCustomAlert('Por favor, adicione pelo menos ' + playersPerTeam + ' jogadores!');
-                    return;
-                }
-                
-                if (!validatePlayerCountAtStep1(playerNames)) {
-                    return;
-                }
-                
-                saveCurrentRatings();
-                playersList.innerHTML = '';
-                
-                for (var i = 0; i < playerNames.length; i++) {
-                    var name = playerNames[i];
-                    var playerCard = document.createElement('div');
-                    playerCard.className = 'player-card';
-                    
-                    var ratingOptions = '';
-                    for (var j = 1; j <= 5; j++) {
-                        var checked = j === 3 ? 'checked' : '';
-                        ratingOptions += '<label class="rating-option">';
-                        ratingOptions += '<input type="radio" name="rating_' + i + '" value="' + j + '" ' + checked + '>';
-                        ratingOptions += j;
-                        ratingOptions += '</label>';
-                    }
-                    
-                    playerCard.innerHTML = '<div class="player-name">' + name.trim() + '</div>' +
-                        '<div class="player-ratings">' +
-                        '<div class="rating-options">' + ratingOptions + '</div>' +
-                        '<div class="goalkeeper-checkbox">' +
-                        '<label><input type="checkbox" name="goalkeeper_' + i + '"> Goleiro</label>' +
-                        '</div></div>';
-                    
-                    playersList.appendChild(playerCard);
-                }
-                
-                if (hasAnyRatings()) {
-                    restoreSavedRatings();
-                }
-                
-                showStep(2);
-                autoSave();
-            });
-
-            goToStep3.addEventListener('click', function() {
-                var playerCards = playersList.querySelectorAll('.player-card');
-                var players = [];
-                
-                for (var i = 0; i < playerCards.length; i++) {
-                    var card = playerCards[i];
-                    var name = card.querySelector('.player-name').textContent;
-                    var ratingInput = card.querySelector('input[name="rating_' + i + '"]:checked');
-                    var isGoalkeeper = card.querySelector('input[name="goalkeeper_' + i + '"]').checked;
-                    
-                    var rating = ratingInput ? parseInt(ratingInput.value) : 3;
-                    
-                    players.push({
-                        name: name,
-                        rating: rating,
-                        isGoalkeeper: isGoalkeeper
-                    });
-                }
-                
-                var teams = createBalancedTeamsImproved(players);
-                if (teams.length === 0) {
-                    return;
-                }
-                
-                currentTeams = teams;
-                setupTeamNaming(teams);
-                showStep(3);
-                autoSave();
-            });
-
-            goToStep4.addEventListener('click', function() {
-                teamNames = getTeamNames();
-                displayTeams(currentTeams);
-                showStep(4);
-                autoSave();
-            });
-
-            backToStep1.addEventListener('click', function() {
-                if (playersList.children.length > 0) {
-                    saveCurrentRatings();
-                    
-                    if (hasAnyRatings()) {
-                        var backModal = document.getElementById('backConfirmModal');
-                        backModal.style.display = 'block';
-                        return;
-                    }
-                }
-                
-                showStep(1);
-            });
-
-            document.getElementById('keepRatingsBtn').addEventListener('click', function() {
-                document.getElementById('backConfirmModal').style.display = 'none';
-                showStep(1);
-            });
-
-            document.getElementById('clearRatingsBtn').addEventListener('click', function() {
-                clearSavedRatings();
-                document.getElementById('backConfirmModal').style.display = 'none';
-                showStep(1);
-            });
-
-            backToStep2.addEventListener('click', function() {
-                showStep(2);
-            });
-
-            backToStep3.addEventListener('click', function() {
-                showStep(3);
-            });
-
-            backToStep4.addEventListener('click', function() {
-                showStep(4);
-            });
-
-            newDraw.addEventListener('click', function() {
-                playersInput.value = '';
-                updatePlayerCounter();
-                teamNames = [];
-                showStep(1);
-            });
-
-            shareWhatsApp.addEventListener('click', function() {
-                if (currentTeams.length > 0) {
-                    shareTeamsOnWhatsApp(currentTeams);
-                }
-            });
-
-            startGames.addEventListener('click', function() {
-                if (currentTeams.length < 2) {
-                    showCustomAlert('É necessário ter pelo menos 2 times para iniciar os jogos!');
-                    return;
-                }
-                initializeGameSystem();
-                showStep(5);
-            });
-
-            // Event Listeners existentes
-            playersInput.addEventListener('input', updatePlayerCounter);
-            updatePlayerCounter();
-
-            gameTypeSelect.addEventListener('change', function() {
-                if (this.value === 'society') {
-                    societyPlayersContainer.style.display = 'block';
-                } else {
-                    societyPlayersContainer.style.display = 'none';
-                }
-            });
-
-            document.getElementById('modalOkButton').addEventListener('click', closeCustomModal);
-
-            window.onclick = function(event) {
-                var modal = document.getElementById('customModal');
-                var backModal = document.getElementById('backConfirmModal');
-                var goalModal = document.getElementById('goalModal');
-                if (event.target === modal) {
-                    closeCustomModal();
-                }
-                if (event.target === backModal) {
-                    backModal.style.display = 'none';
-                }
-                if (event.target === goalModal) {
-                    closeGoalModal();
-                }
-            };
-
-            // Proteção contra saída acidental
-            window.addEventListener('beforeunload', function(e) {
-                if (gameData.teams.length > 0 || gameData.matches.length > 0 || currentTeams.length > 0) {
-                    var message = 'Você tem um torneio em andamento. Tem certeza que deseja sair?';
-                    e.returnValue = message;
-                    return message;
-                }
-            });
-
-            // Event listeners para backup
-            setTimeout(function() {
-                var exportBtn = document.getElementById('exportBtn');
-                var importBtn = document.getElementById('importBtn');
-                var fileInput = document.getElementById('fileInput');
-                
-                if (exportBtn) exportBtn.addEventListener('click', exportData);
-                if (importBtn) importBtn.addEventListener('click', importData);
-                if (fileInput) fileInput.addEventListener('change', handleFileImport);
-            }, 1000);
-
-            // Auto-save em funções do jogo
-            var originalConfirmGoal = window.confirmGoal;
-            window.confirmGoal = function() {
-                if (originalConfirmGoal) originalConfirmGoal();
-                autoSave();
-            };
-
-            var originalEndMatch = window.endMatch;
-            window.endMatch = function(reason) {
-                if (originalEndMatch) originalEndMatch(reason);
-                autoSave();
-            };
-
-            // FECHAR A FUNÇÃO DOMContentLoaded
         });
     </script>
     <!-- Modal de Troca de Jogadores -->
@@ -4038,33 +3351,5 @@ Lucas"></textarea>
             </div>
         </div>
     </div>
-    <!-- Modal de Restauração -->
-    <div id="restoreModal" class="restore-modal">
-        <div class="restore-modal-content">
-            <div class="restore-modal-header">
-                <h3>🔄 Torneio Encontrado!</h3>
-            </div>
-            <div class="restore-modal-body">
-                <p>Foi encontrado um torneio salvo anteriormente. O que deseja fazer?</p>
-                <div id="restoreInfo" class="restore-info"></div>
-            </div>
-            <div class="restore-modal-footer">
-                <button class="restore-modal-btn restore-continue-btn" id="continueBtn">
-                    ▶️ Continuar Torneio
-                </button>
-                <button class="restore-modal-btn restore-new-btn" id="newTournamentBtn">
-                    🆕 Novo Torneio
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Indicador de Auto-Save -->
-    <div id="autoSaveIndicator" class="auto-save-indicator">
-        ✅ Dados salvos automaticamente
-    </div>
-
-    <!-- Input para import de arquivo -->
-    <input type="file" id="fileInput" accept=".json">
 </body>
 </html>
