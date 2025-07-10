@@ -2115,7 +2115,7 @@
                 }
                 
                 try {
-                    console.log('🔄 Iniciando auto-save completo...');
+                    console.log('🔄 Iniciando auto-save ultra minimalista...');
                     showSaveIndicator('saving');
                     
                     // CONTAR A OPERAÇÃO
@@ -2123,142 +2123,72 @@
                         contadorFirebase.contarEscrita();
                     }
                     
-                    // CAPTURAR QUALIFICAÇÕES DIRETAMENTE DA INTERFACE (se estiver no step 2)
-                    var currentRatings = {};
-                    var currentStep = getCurrentStep();
-                    
-                    if (currentStep === 2) {
-                        console.log('📊 Capturando qualificações da interface (Step 2)...');
-                        currentRatings = captureCurrentRatings();
-                    } else {
-                        // Se não estiver no step 2, usar as qualificações já salvas
-                        currentRatings = savedRatings || {};
-                    }
-                    
-                    console.log('💾 Qualificações a serem salvas:', Object.keys(currentRatings).length, 'jogadores');
-                    console.log('📋 Dados das qualificações:', currentRatings);
-                    
-                    // DADOS COMPLETOS PARA RESTAURAÇÃO PERFEITA
+                    // APENAS DADOS PRIMITIVOS - NENHUM ARRAY OU OBJETO COMPLEXO
                     const gameState = {
-                        // Configurações básicas
+                        // Configurações básicas (strings/numbers)
                         gameType: document.getElementById('gameType') ? document.getElementById('gameType').value : 'futsal',
                         societyPlayers: document.getElementById('societyPlayers') ? document.getElementById('societyPlayers').value : '5',
                         numTeams: document.getElementById('numTeams') ? document.getElementById('numTeams').value : '2',
                         
-                        // Lista de jogadores como STRING
+                        // Lista de jogadores como STRING SIMPLES
                         playersInputText: document.getElementById('playersInput') ? document.getElementById('playersInput').value : '',
                         
-                        // Times sorteados (DADOS ESSENCIAIS)
-                        hasTeamsSorted: currentTeams && currentTeams.length > 0,
-                        teamsData: currentTeams && currentTeams.length > 0 ? JSON.stringify(currentTeams) : '',
-                        teamNamesData: teamNames && teamNames.length > 0 ? teamNames.join('|') : '',
+                        // Nomes dos times como STRING ÚNICA
+                        teamNamesText: teamNames ? teamNames.join('|') : '',
                         
-                        // QUALIFICAÇÕES - usar as capturadas da interface
-                        savedRatingsData: Object.keys(currentRatings).length > 0 ? JSON.stringify(currentRatings) : '',
-                        
-                        // Estado atual do step
-                        currentStep: currentStep,
-                        
-                        // Dados do jogo ativo (se houver)
+                        // Estado do jogo como STRINGS/NUMBERS
                         hasActiveGame: !!(gameData && gameData.currentMatch),
-                        gameDataComplete: gameData ? JSON.stringify({
-                            teams: gameData.teams || [],
-                            matches: gameData.matches || [],
-                            currentMatch: gameData.currentMatch || null,
-                            timer: gameData.timer || { minutes: 0, seconds: 0, running: false },
-                            gameMode: gameData.gameMode || 'continuous',
-                            timeLimit: gameData.timeLimit || 10,
-                            goalLimit: gameData.goalLimit || 2,
-                            tournamentStats: gameData.tournamentStats || {}
-                        }) : '',
+                        currentStep: getCurrentStep(),
+                        
+                        // Se há jogo ativo, APENAS dados primitivos
+                        team1Name: gameData && gameData.currentMatch ? gameData.currentMatch.team1.name : '',
+                        team2Name: gameData && gameData.currentMatch ? gameData.currentMatch.team2.name : '',
+                        score1: gameData && gameData.currentMatch ? (gameData.currentMatch.score1 || 0) : 0,
+                        score2: gameData && gameData.currentMatch ? (gameData.currentMatch.score2 || 0) : 0,
+                        timerMinutes: gameData && gameData.timer ? (gameData.timer.minutes || 0) : 0,
+                        timerSeconds: gameData && gameData.timer ? (gameData.timer.seconds || 0) : 0,
+                        timerRunning: gameData && gameData.timer ? (gameData.timer.running || false) : false,
+                        gameMode: gameData ? (gameData.gameMode || 'continuous') : 'continuous',
                         
                         // Timestamp
                         lastSaved: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     
-                    console.log('📦 Salvando dados completos:', {
+                    console.log('📦 Dados ultra simples:', {
                         gameType: gameState.gameType,
                         playersCount: gameState.playersInputText.split('\n').filter(x => x.trim()).length,
-                        ratingsCount: Object.keys(currentRatings).length,
-                        hasTeamsSorted: gameState.hasTeamsSorted,
-                        teamsCount: gameState.teamNamesData.split('|').filter(x => x.trim()).length,
-                        currentStep: gameState.currentStep,
+                        teamsCount: gameState.teamNamesText.split('|').filter(x => x.trim()).length,
                         hasActiveGame: gameState.hasActiveGame
                     });
                     
-                    // Salvar no Firebase
+                    // Tentar salvar
                     await db.collection('users').doc(currentUser.uid)
                         .collection('games').doc('current').set(gameState);
                     
                     showSaveIndicator('saved');
-                    console.log('✅ Auto-save completo realizado com sucesso');
+                    console.log('✅ Auto-save ultra minimalista realizado com sucesso');
                     
                 } catch (error) {
-                    console.error('❌ ERRO no auto-save completo:', error);
+                    console.error('❌ ERRO DETALHADO no auto-save ultra minimalista:');
+                    console.error('- Código:', error.code);
+                    console.error('- Mensagem:', error.message);
+                    console.error('- Stack completa:', error.stack);
                     showSaveIndicator('error');
                 }
             }
 
-            // Nova função para capturar qualificações da interface
-            function captureCurrentRatings() {
-                var ratings = {};
-                var playersList = document.getElementById('playersList');
-                
-                if (!playersList) {
-                    console.log('⚠️ Lista de jogadores não encontrada para capturar qualificações');
-                    return ratings;
-                }
-                
-                var playerCards = playersList.querySelectorAll('.player-card');
-                console.log('🔍 Capturando qualificações de', playerCards.length, 'cards...');
-                
-                for (var i = 0; i < playerCards.length; i++) {
-                    var card = playerCards[i];
-                    var nameElement = card.querySelector('.player-name');
-                    
-                    if (!nameElement) {
-                        console.log('⚠️ Nome do jogador não encontrado no card', i);
-                        continue;
-                    }
-                    
-                    var playerName = nameElement.textContent.trim();
-                    
-                    // Capturar rating selecionado
-                    var ratingInput = card.querySelector('input[name="rating_' + i + '"]:checked');
-                    var rating = ratingInput ? parseInt(ratingInput.value) : 3;
-                    
-                    // Capturar status de goleiro
-                    var gkInput = card.querySelector('input[name="goalkeeper_' + i + '"]');
-                    var isGoalkeeper = gkInput ? gkInput.checked : false;
-                    
-                    ratings[playerName] = {
-                        rating: rating,
-                        isGoalkeeper: isGoalkeeper
-                    };
-                    
-                    console.log('📊 Capturado:', playerName, '- Rating:', rating, '- Goleiro:', isGoalkeeper);
-                }
-                
-                console.log('✅ Qualificações capturadas:', Object.keys(ratings).length, 'jogadores');
-                return ratings;
-            }
-
+            // FUNÇÃO AUXILIAR - adicionar se não existir:
             function getCurrentStep() {
                 try {
-                    // Verificar qual step está ativo
                     for (var i = 1; i <= 5; i++) {
                         var step = document.getElementById('step' + i);
                         if (step && step.classList.contains('active')) {
-                            console.log('📍 Step atual detectado:', i);
                             return i;
                         }
                     }
-                    
-                    // Se nenhum step estiver ativo, retornar 1
-                    console.log('📍 Nenhum step ativo, assumindo step 1');
                     return 1;
                 } catch (e) {
-                    console.warn('⚠️ Erro ao detectar step atual:', e);
+                    console.warn('Erro ao detectar step atual:', e);
                     return 1;
                 }
             }
@@ -2269,9 +2199,6 @@
                 try {
                     console.log('🔍 Verificando jogo salvo...');
                     
-                    // CONTAR A OPERAÇÃO
-                    contadorFirebase.contarLeitura();
-                    
                     const doc = await db.collection('users').doc(currentUser.uid)
                         .collection('games').doc('current').get();
                     
@@ -2279,56 +2206,8 @@
                         const savedState = doc.data();
                         console.log('📁 Jogo encontrado:', savedState);
                         
-                        // Verificar se tem dados significativos para restaurar
-                        var hasSignificantData = false;
-                        var dataTypes = [];
-                        
-                        if (savedState.playersInputText && savedState.playersInputText.trim()) {
-                            hasSignificantData = true;
-                            dataTypes.push('jogadores');
-                        }
-                        if (savedState.hasTeamsSorted) {
-                            hasSignificantData = true;
-                            dataTypes.push('times sorteados');
-                        }
-                        if (savedState.hasActiveGame) {
-                            hasSignificantData = true;
-                            dataTypes.push('jogo ativo');
-                        }
-                        
-                        console.log('📊 Tipos de dados encontrados:', dataTypes);
-                        
-                        if (hasSignificantData) {
-                            // Para jogos ativos, restaurar automaticamente
-                            if (savedState.hasActiveGame) {
-                                console.log('🎮 Restaurando jogo ativo automaticamente...');
-                                
-                                // Dar tempo suficiente para a interface carregar
-                                setTimeout(function() {
-                                    console.log('🚀 Iniciando restauração do jogo ativo...');
-                                    restoreUltraSimpleState(savedState);
-                                }, 2000); // Aumentado para 2 segundos
-                                
-                            } else {
-                                // Para outros casos, perguntar ao usuário
-                                var message = '';
-                                if (savedState.hasTeamsSorted) {
-                                    message = '⚽ TIMES SORTEADOS ENCONTRADOS!\n\nVocê tem times já sorteados salvos. Deseja continuar com eles?';
-                                } else {
-                                    message = '📝 CONFIGURAÇÃO SALVA!\n\nVocê tem uma configuração de jogo salva. Deseja continuar de onde parou?';
-                                }
-                                
-                                if (confirm(message)) {
-                                    setTimeout(function() {
-                                        restoreUltraSimpleState(savedState);
-                                    }, 1000);
-                                } else {
-                                    console.log('👤 Usuário optou por não restaurar');
-                                }
-                            }
-                            
-                        } else {
-                            console.log('📭 Jogo salvo sem dados significativos');
+                        if (confirm('Você tem um jogo salvo. Deseja continuar de onde parou?')) {
+                            restoreUltraSimpleState(savedState);
                         }
                     } else {
                         console.log('📭 Nenhum jogo salvo encontrado');
@@ -2338,1462 +2217,57 @@
                 }
             }
 
+            // FUNÇÃO DE RESTAURAÇÃO - adicionar:
             function restoreUltraSimpleState(savedState) {
                 try {
-                    console.log('🔄 INICIANDO restauração exata do estado...');
-                    console.log('📋 Dados recebidos:', savedState);
-                    
-                    // 1. RESTAURAR CONFIGURAÇÕES BÁSICAS
+                    // Restaurar configurações
                     if (savedState.gameType && document.getElementById('gameType')) {
                         document.getElementById('gameType').value = savedState.gameType;
-                        
-                        var societyContainer = document.getElementById('societyPlayersContainer');
-                        if (societyContainer) {
-                            societyContainer.style.display = savedState.gameType === 'society' ? 'block' : 'none';
-                        }
                     }
-                    
                     if (savedState.societyPlayers && document.getElementById('societyPlayers')) {
                         document.getElementById('societyPlayers').value = savedState.societyPlayers;
                     }
-                    
                     if (savedState.numTeams && document.getElementById('numTeams')) {
                         document.getElementById('numTeams').value = savedState.numTeams;
                     }
-                    
-                    // 2. RESTAURAR LISTA DE JOGADORES
                     if (savedState.playersInputText && document.getElementById('playersInput')) {
                         document.getElementById('playersInput').value = savedState.playersInputText;
-                        
-                        // Atualizar contador
-                        var playersInput = document.getElementById('playersInput');
-                        var playerCounter = document.getElementById('playerCounter');
-                        if (playersInput && playerCounter) {
-                            var playerNames = playersInput.value.split('\n').filter(function(name) {
-                                return name.trim() !== '';
-                            });
-                            var count = playerNames.length;
-                            playerCounter.textContent = count + ' jogador' + (count !== 1 ? 'es' : '') + ' listado' + (count !== 1 ? 's' : '');
+                        if (typeof updatePlayerCounter === 'function') {
+                            updatePlayerCounter();
                         }
                     }
                     
-                    // 3. RESTAURAR QUALIFICAÇÕES
-                    if (savedState.savedRatingsData) {
-                        try {
-                            savedRatings = JSON.parse(savedState.savedRatingsData);
-                            console.log('✅ Qualificações restauradas:', Object.keys(savedRatings).length, 'jogadores');
-                            console.log('📊 Dados restaurados:', savedRatings);
-                            
-                            // Verificar se os dados foram restaurados corretamente
-                            Object.keys(savedRatings).forEach(function(playerName) {
-                                console.log('👤', playerName, '- Rating:', savedRatings[playerName].rating, '- Goleiro:', savedRatings[playerName].isGoalkeeper);
-                            });
-                        } catch (e) {
-                            console.error('❌ Erro ao restaurar qualificações:', e);
-                            savedRatings = {};
-                        }
-                    } else {
-                        console.log('⚠️ Nenhuma qualificação salva encontrada');
-                        savedRatings = {};
+                    // Restaurar nomes dos times
+                    if (savedState.teamNamesText) {
+                        teamNames = savedState.teamNamesText.split('|').filter(function(name) {
+                            return name.trim() !== '';
+                        });
                     }
                     
-                    // 4. RESTAURAR TIMES SORTEADOS
-                    if (savedState.hasTeamsSorted && savedState.teamsData) {
-                        try {
-                            currentTeams = JSON.parse(savedState.teamsData);
-                            
-                            if (savedState.teamNamesData) {
-                                teamNames = savedState.teamNamesData.split('|').filter(function(name) {
-                                    return name.trim() !== '';
-                                });
-                            } else {
-                                teamNames = [];
-                            }
-                            console.log('✅ Times sorteados restaurados:', currentTeams.length, 'times');
-                        } catch (e) {
-                            currentTeams = [];
-                            teamNames = [];
+                    // Informar sobre jogo ativo
+                    if (savedState.hasActiveGame) {
+                        var message = 'Jogo encontrado:\n' + 
+                            savedState.team1Name + ' ' + savedState.score1 + 
+                            ' x ' + savedState.score2 + ' ' + savedState.team2Name + 
+                            '\nTempo: ' + savedState.timerMinutes + ':' + 
+                            String(savedState.timerSeconds).padStart(2, '0') + 
+                            '\n\nVocê precisará reconfigurar os times para continuar.';
+                        alert(message);
+                    }
+                    
+                    // Ir para step salvo (máximo step 4)
+                    if (savedState.currentStep && savedState.currentStep > 1) {
+                        var targetStep = Math.min(savedState.currentStep, 4);
+                        if (typeof showStep === 'function') {
+                            showStep(targetStep);
                         }
                     }
                     
-                    // 5. RESTAURAR DADOS DO JOGO (mas não forçar ir para step 5)
-                    if (savedState.hasActiveGame && savedState.gameDataComplete) {
-                        try {
-                            gameData = JSON.parse(savedState.gameDataComplete);
-                            console.log('✅ Dados do jogo restaurados (sem forçar step 5)');
-                        } catch (e) {
-                            console.error('❌ Erro ao restaurar gameData:', e);
-                        }
-                    }
-                    
-                    // 6. DETERMINAR STEP CORRETO - USAR O STEP SALVO COMO PRIORIDADE
-                    var targetStep = 1;
-                    
-                    if (savedState.currentStep) {
-                        // SEMPRE usar o step salvo como prioridade principal
-                        targetStep = savedState.currentStep;
-                        console.log('🎯 Usando step salvo como prioridade:', targetStep);
-                    } else {
-                        // Só se não tiver step salvo, usar lógica de fallback
-                        if (savedState.hasActiveGame && gameData && gameData.currentMatch) {
-                            targetStep = 5;
-                        } else if (savedState.hasTeamsSorted && currentTeams && currentTeams.length > 0) {
-                            targetStep = 4;
-                        }
-                        console.log('🎯 Step determinado por fallback:', targetStep);
-                    }
-                    
-                    console.log('📍 Step final determinado:', targetStep);
-                    
-                    // 7. EXECUTAR TRANSIÇÃO PARA O STEP CORRETO
-                    setTimeout(function() {
-                        // Mudar step manualmente
-                        var steps = document.querySelectorAll('.step');
-                        var stepDots = document.querySelectorAll('.step-dot');
-                        
-                        for (var i = 0; i < steps.length; i++) {
-                            steps[i].classList.remove('active');
-                        }
-                        for (var i = 0; i < stepDots.length; i++) {
-                            stepDots[i].classList.remove('active');
-                        }
-                        
-                        var targetStepElement = document.getElementById('step' + targetStep);
-                        var targetDotElement = document.querySelector('.step-dot[data-step="' + targetStep + '"]');
-                        
-                        if (targetStepElement) {
-                            targetStepElement.classList.add('active');
-                            console.log('✅ Step', targetStep, 'ativado');
-                        }
-                        if (targetDotElement) {
-                            targetDotElement.classList.add('active');
-                            console.log('✅ Dot do step', targetStep, 'ativado');
-                        }
-                        
-                        // 8. EXECUTAR AÇÕES ESPECÍFICAS POR STEP
-                        setTimeout(function() {
-                            executeStepSpecificActions(targetStep, savedState);
-                        }, 300);
-                        
-                    }, 500);
+                    console.log('✅ Estado ultra simples restaurado');
                     
                 } catch (error) {
-                    console.error('❌ Erro na restauração:', error);
+                    console.error('❌ Erro ao restaurar estado:', error);
                 }
-            }
-
-            function executeStepSpecificActions(targetStep, savedState) {
-                console.log('🎬 Executando ações específicas para step:', targetStep);
-                
-                if (targetStep === 2) {
-                    // STEP 2: Restaurar qualificações na interface
-                    console.log('🔄 Executando ações do Step 2...');
-                    console.log('📝 Texto de jogadores disponível:', document.getElementById('playersInput') ? document.getElementById('playersInput').value : 'NÃO ENCONTRADO');
-                    console.log('⭐ Qualificações salvas:', savedRatings);
-                    
-                    setTimeout(function() {
-                        restoreRatingsInterface();
-                    }, 200);                    
-                } else if (targetStep === 3) {
-                    // STEP 3: Mostrar interface de nomeação
-                    setTimeout(function() {
-                        if (currentTeams && currentTeams.length > 0) {
-                            reconstructTeamNamingInterface();
-                        }
-                    }, 200);
-                    
-                } else if (targetStep === 4) {
-                    // STEP 4: Mostrar times sorteados
-                    setTimeout(function() {
-                        if (currentTeams && currentTeams.length > 0) {
-                            reconstructStep4Display();
-                        }
-                    }, 200);
-                    
-                } else if (targetStep === 5) {
-                    // STEP 5: Configurar interface do jogo
-                    setTimeout(function() {
-                        if (gameData && gameData.currentMatch) {
-                            setupRestoredMatchInterface();
-                        } else {
-                            // Se não tem jogo ativo, mostrar interface de configuração
-                            showGameConfigInterface();
-                        }
-                    }, 200);
-                }
-                
-                // Mensagem de sucesso específica
-                setTimeout(function() {
-                    showStepRestoreMessage(targetStep, savedState);
-                }, 1000);
-            }
-
-            function restoreRatingsInterface() {
-                console.log('⭐ Restaurando interface de qualificações...');
-                console.log('📋 savedRatings disponível:', savedRatings);
-                console.log('📊 Número de qualificações salvas:', Object.keys(savedRatings).length);
-                
-                var playersInput = document.getElementById('playersInput');
-                var playersList = document.getElementById('playersList');
-                
-                if (!playersInput || !playersList) {
-                    console.log('❌ Elementos de qualificação não encontrados');
-                    return;
-                }
-                
-                var playersText = playersInput.value;
-                console.log('📝 Texto dos jogadores:', playersText);
-                
-                if (!playersText || playersText.trim() === '') {
-                    console.log('❌ Nenhum texto de jogadores encontrado');
-                    return;
-                }
-                
-                var playerNames = playersText.split('\n').filter(function(name) {
-                    return name.trim() !== '';
-                });
-                
-                console.log('👥 Jogadores encontrados:', playerNames.length, playerNames);
-                
-                if (playerNames.length === 0) {
-                    console.log('❌ Nenhum jogador válido na lista');
-                    return;
-                }
-                
-                // Limpar lista atual
-                playersList.innerHTML = '';
-                console.log('🧹 Lista de jogadores limpa');
-                
-                // Recriar cards de qualificação para cada jogador
-                for (var i = 0; i < playerNames.length; i++) {
-                    var name = playerNames[i].trim();
-                    console.log('🔧 Criando card para jogador:', name);
-                    
-                    // Verificar se tem qualificação salva para este jogador
-                    var savedRating = null;
-                    var savedIsGoalkeeper = false;
-                    
-                    if (savedRatings && savedRatings[name]) {
-                        savedRating = savedRatings[name].rating;
-                        savedIsGoalkeeper = savedRatings[name].isGoalkeeper;
-                        console.log('📊 Qualificação encontrada para', name, '- Rating:', savedRating, '- Goleiro:', savedIsGoalkeeper);
-                    } else {
-                        console.log('⚠️ Nenhuma qualificação salva para', name, '- usando padrão');
-                    }
-                    
-                    var playerCard = document.createElement('div');
-                    playerCard.className = 'player-card';
-                    
-                    // Criar opções de rating (1 a 5)
-                    var ratingOptions = '';
-                    for (var j = 1; j <= 5; j++) {
-                        var checked = '';
-                        
-                        if (savedRating !== null) {
-                            // Se tem qualificação salva, usar ela
-                            if (j === savedRating) {
-                                checked = 'checked';
-                                console.log('✅ Aplicando rating salvo', j, 'para', name);
-                            }
-                        } else {
-                            // Se não tem qualificação salva, usar padrão 3
-                            if (j === 3) {
-                                checked = 'checked';
-                                console.log('📌 Aplicando rating padrão 3 para', name);
-                            }
-                        }
-                        
-                        ratingOptions += '<label class="rating-option">';
-                        ratingOptions += '<input type="radio" name="rating_' + i + '" value="' + j + '" ' + checked + '>';
-                        ratingOptions += j;
-                        ratingOptions += '</label>';
-                    }
-                    
-                    // Montar HTML do card
-                    playerCard.innerHTML = 
-                        '<div class="player-name">' + name + '</div>' +
-                        '<div class="player-ratings">' +
-                            '<div class="rating-options">' + ratingOptions + '</div>' +
-                            '<div class="goalkeeper-checkbox">' +
-                                '<label><input type="checkbox" name="goalkeeper_' + i + '" ' + (savedIsGoalkeeper ? 'checked' : '') + '> Goleiro</label>' +
-                            '</div>' +
-                        '</div>';
-                    
-                    playersList.appendChild(playerCard);
-                    console.log('✅ Card criado para', name);
-                }
-                
-                console.log('🎉 Interface de qualificações restaurada com', playerNames.length, 'jogadores');
-                
-                // Verificação final detalhada
-                setTimeout(function() {
-                    var cards = playersList.querySelectorAll('.player-card');
-                    console.log('🔍 VERIFICAÇÃO FINAL: Cards criados:', cards.length);
-                    
-                    cards.forEach(function(card, index) {
-                        var playerName = card.querySelector('.player-name').textContent;
-                        var checkedRating = card.querySelector('input[type="radio"]:checked');
-                        var isGkChecked = card.querySelector('input[type="checkbox"]').checked;
-                        
-                        var ratingValue = checkedRating ? checkedRating.value : 'NENHUM';
-                        var expectedRating = savedRatings[playerName] ? savedRatings[playerName].rating : 3;
-                        var expectedGk = savedRatings[playerName] ? savedRatings[playerName].isGoalkeeper : false;
-                        
-                        console.log('📊 RESULTADO:', playerName);
-                        console.log('   - Rating aplicado:', ratingValue, '(esperado:', expectedRating + ')');
-                        console.log('   - Goleiro aplicado:', isGkChecked, '(esperado:', expectedGk + ')');
-                        
-                        if (ratingValue != expectedRating) {
-                            console.error('❌ ERRO: Rating não foi aplicado corretamente para', playerName);
-                        }
-                        if (isGkChecked !== expectedGk) {
-                            console.error('❌ ERRO: Status de goleiro não foi aplicado corretamente para', playerName);
-                        }
-                    });
-                }, 500);
-            }
-
-            function reconstructTeamNamingInterface() {
-                console.log('🏷️ Reconstruindo interface de nomeação...');
-                
-                var teamNamingGrid = document.getElementById('teamNamingGrid');
-                if (!teamNamingGrid || !currentTeams) return;
-                
-                teamNamingGrid.innerHTML = '';
-                
-                for (var i = 0; i < currentTeams.length; i++) {
-                    var team = currentTeams[i];
-                    var defaultName = teamNames[i] || ('TIME ' + (i + 1));
-                    
-                    var teamSum = 0;
-                    for (var j = 0; j < team.length; j++) {
-                        teamSum += team[j].rating;
-                    }
-                    var teamAvg = (teamSum / team.length).toFixed(1);
-                    
-                    var playersList = '';
-                    var sortedTeam = team.slice().sort(function(a, b) {
-                        if (a.isGoalkeeper && !b.isGoalkeeper) return -1;
-                        if (!a.isGoalkeeper && b.isGoalkeeper) return 1;
-                        return b.rating - a.rating;
-                    });
-                    
-                    for (var j = 0; j < Math.min(3, sortedTeam.length); j++) {
-                        var player = sortedTeam[j];
-                        if (playersList !== '') playersList += ', ';
-                        playersList += player.name;
-                        if (player.isGoalkeeper) {
-                            playersList += ' (GK)';
-                        }
-                    }
-                    if (sortedTeam.length > 3) {
-                        playersList += '...';
-                    }
-                    
-                    var teamCard = document.createElement('div');
-                    teamCard.className = 'team-naming-card';
-                    teamCard.innerHTML = 
-                        '<h4>Time ' + (i + 1) + '</h4>' +
-                        '<input type="text" id="teamName_' + i + '" value="' + defaultName + '" maxlength="20">' +
-                        '<div class="team-preview">' +
-                            '<div class="team-preview-header">Média: ' + teamAvg + '</div>' +
-                            '<div class="team-preview-players">' + playersList + '</div>' +
-                        '</div>';
-                    
-                    teamNamingGrid.appendChild(teamCard);
-                }
-                
-                console.log('✅ Interface de nomeação reconstruída');
-            }
-
-            function showGameConfigInterface() {
-                console.log('⚙️ Mostrando interface de configuração do jogo...');
-                
-                var gameConfigSection = document.getElementById('gameConfigSection');
-                var gamePlaySection = document.getElementById('gamePlaySection');
-                var playerManagementSection = document.getElementById('playerManagementSection');
-                var gameResultSection = document.getElementById('gameResultSection');
-                var gameBackBtn = document.getElementById('gameBackBtn');
-                
-                if (gameConfigSection) gameConfigSection.style.display = 'block';
-                if (gamePlaySection) gamePlaySection.style.display = 'none';
-                if (playerManagementSection) playerManagementSection.style.display = 'none';
-                if (gameResultSection) gameResultSection.style.display = 'none';
-                if (gameBackBtn) gameBackBtn.style.display = 'block';
-                
-                // Popular selects de times se necessário
-                setTimeout(function() {
-                    if (gameData && gameData.teams && gameData.teams.length > 0) {
-                        populateTeamSelectsRestored();
-                    }
-                }, 200);
-            }
-
-            function showStepRestoreMessage(targetStep, savedState) {
-                var messages = {
-                    1: '🏠 Configuração restaurada!\n\nVocê pode continuar configurando seu jogo.',
-                    2: '⭐ Qualificações restauradas!\n\nSuas qualificações foram mantidas.',
-                    3: '🏷️ Nomes dos times restaurados!\n\nVocê pode continuar personalizando os nomes.',
-                    4: '⚽ Times sorteados restaurados!\n\nSeus times estão prontos para jogar.',
-                    5: savedState.hasActiveGame ? 
-                        '🎮 Jogo ativo restaurado!\n\nTodos os dados da partida foram mantidos.' :
-                        '🎯 Configuração de jogos restaurada!\n\nVocê pode configurar uma nova partida.'
-                };
-                
-                var message = messages[targetStep] || '✅ Estado restaurado com sucesso!';
-                alert(message);
-            }
-
-            // Função auxiliar para reconstruir step 4
-            function reconstructStep4Display() {
-                var teamsResult = document.getElementById('teamsResult');
-                if (!teamsResult || !currentTeams) return;
-                
-                teamsResult.innerHTML = '';
-                
-                for (var i = 0; i < currentTeams.length; i++) {
-                    var team = currentTeams[i];
-                    var teamCard = document.createElement('div');
-                    teamCard.className = 'team-card';
-                    
-                    var teamName = teamNames[i] || 'Time ' + (i + 1);
-                    var teamSum = 0;
-                    for (var j = 0; j < team.length; j++) {
-                        teamSum += team[j].rating;
-                    }
-                    var teamAvg = (teamSum / team.length).toFixed(1);
-                    
-                    var teamContent = '<div class="team-header">';
-                    teamContent += '<h3 class="team-name">' + teamName + '</h3>';
-                    teamContent += '<div class="team-rating">Média: ' + teamAvg + '</div>';
-                    teamContent += '</div>';
-                    
-                    team.sort(function(a, b) {
-                        if (a.isGoalkeeper && !b.isGoalkeeper) return -1;
-                        if (!a.isGoalkeeper && b.isGoalkeeper) return 1;
-                        return b.rating - a.rating;
-                    });
-                    
-                    teamContent += '<div class="team-players">';
-                    for (var j = 0; j < team.length; j++) {
-                        var player = team[j];
-                        var playerClass = '';
-                        var playerDisplayName = player.name;
-                        
-                        if (player.isGoalkeeper) {
-                            if (player.isMakeshift) {
-                                playerClass = 'makeshift-goalkeeper';
-                                playerDisplayName += ' (Goleiro Improvisado)';
-                            } else {
-                                playerClass = 'goalkeeper';
-                            }
-                        }
-                        
-                        if (player.isFake) {
-                            playerClass = 'fake-player';
-                        }
-                        
-                        teamContent += '<div class="player-item">';
-                        teamContent += '<div class="player-item-name ' + playerClass + '">' + playerDisplayName + '</div>';
-                        teamContent += '<div class="player-item-rating">' + player.rating + '</div>';
-                        teamContent += '</div>';
-                    }
-                    teamContent += '</div>';
-                    
-                    teamCard.innerHTML = teamContent;
-                    teamsResult.appendChild(teamCard);
-                }
-            }
-
-            // Função para configurar interface da partida restaurada
-            function setupRestoredMatchInterface() {
-                if (!gameData || !gameData.currentMatch) return;
-                
-                var match = gameData.currentMatch;
-                
-                // Configurar títulos
-                var matchTitle = document.getElementById('matchTitle');
-                var team1Name = document.getElementById('team1Name');
-                var team2Name = document.getElementById('team2Name');
-                var team1PanelName = document.getElementById('team1PanelName');
-                var team2PanelName = document.getElementById('team2PanelName');
-                
-                if (matchTitle) matchTitle.textContent = match.team1.name + ' vs ' + match.team2.name;
-                if (team1Name) team1Name.textContent = match.team1.name;
-                if (team2Name) team2Name.textContent = match.team2.name;
-                if (team1PanelName) team1PanelName.textContent = match.team1.name;
-                if (team2PanelName) team2PanelName.textContent = match.team2.name;
-                
-                // Configurar placar
-                var team1Score = document.getElementById('team1Score');
-                var team2Score = document.getElementById('team2Score');
-                if (team1Score) team1Score.textContent = match.score1 || 0;
-                if (team2Score) team2Score.textContent = match.score2 || 0;
-                
-                // Configurar timer
-                var timer = document.getElementById('timer');
-                var playPauseBtn = document.getElementById('playPauseBtn');
-                if (timer && gameData.timer) {
-                    var minutes = String(gameData.timer.minutes || 0).padStart(2, '0');
-                    var seconds = String(gameData.timer.seconds || 0).padStart(2, '0');
-                    timer.textContent = minutes + ':' + seconds;
-                }
-                if (playPauseBtn) {
-                    if (gameData.timer && gameData.timer.running) {
-                        playPauseBtn.textContent = '⏸️ Pausar';
-                    } else {
-                        playPauseBtn.textContent = '▶️ Continuar';
-                    }
-                }
-                
-                // Configurar tipo de jogo
-                var gameTypeInfo = document.getElementById('gameTypeInfo');
-                if (gameTypeInfo) {
-                    if (gameData.gameMode === 'timed') {
-                        gameTypeInfo.textContent = 'Primeiro a ' + gameData.goalLimit + ' gols ou ' + gameData.timeLimit + ' minutos';
-                    } else {
-                        gameTypeInfo.textContent = 'Jogo contínuo - sem limite de tempo';
-                    }
-                }
-                
-                // Popular jogadores usando a lógica original
-                setTimeout(function() {
-                    populatePlayersListRestored();
-                    updateGoalHistoryRestored();
-                    populateNewPlayerTeamSelectRestored();
-                    populateTeamSelectsRestored();
-                    setupEventListenersForRestoredGame();
-                }, 200);
-            }
-
-            function populateTeamSelectsRestored() {
-                console.log('🔧 Populando comboboxes dos times...');
-                
-                var team1Select = document.getElementById('team1Select');
-                var team2Select = document.getElementById('team2Select');
-                
-                if (!team1Select || !team2Select) {
-                    console.log('❌ Comboboxes não encontrados');
-                    return;
-                }
-                
-                // Limpar opções existentes
-                team1Select.innerHTML = '';
-                team2Select.innerHTML = '';
-                
-                if (!gameData.teams || gameData.teams.length === 0) {
-                    console.log('❌ Nenhum time encontrado no gameData');
-                    return;
-                }
-                
-                console.log('📋 Times disponíveis:', gameData.teams.length);
-                
-                // Popular comboboxes com os times
-                gameData.teams.forEach(function(team) {
-                    // Option para team1Select
-                    var option1 = document.createElement('option');
-                    option1.value = team.id;
-                    option1.textContent = team.name;
-                    team1Select.appendChild(option1);
-                    
-                    // Option para team2Select
-                    var option2 = document.createElement('option');
-                    option2.value = team.id;
-                    option2.textContent = team.name;
-                    team2Select.appendChild(option2);
-                    
-                    console.log('✅ Time adicionado aos selects:', team.name);
-                });
-                
-                // Selecionar times diferentes por padrão
-                if (gameData.teams.length > 1) {
-                    team1Select.value = gameData.teams[0].id;
-                    team2Select.value = gameData.teams[1].id;
-                    console.log('✅ Times padrão selecionados:', gameData.teams[0].name, 'vs', gameData.teams[1].name);
-                }
-                
-                console.log('🎉 Comboboxes dos times populados com sucesso!');
-            }
-
-            function setupEventListenersForRestoredGame() {
-                console.log('🔗 Simulando inicialização normal do sistema de jogos...');
-                
-                // Em vez de tentar recriar, vamos simular o processo normal
-                // Isso vai executar todas as funções de configuração que já existem
-                
-                setTimeout(function() {
-                    console.log('🎮 Tentando executar configuração original...');
-                    
-                    // 1. Executar setupGoalModal se existir
-                    try {
-                        if (typeof setupGoalModal === 'function') {
-                            setupGoalModal();
-                            console.log('✅ setupGoalModal executado');
-                        }
-                    } catch (e) {
-                        console.log('⚠️ setupGoalModal não acessível:', e.message);
-                    }
-                    
-                    // 2. Executar setupPlayerManagement se existir  
-                    try {
-                        if (typeof setupPlayerManagement === 'function') {
-                            setupPlayerManagement();
-                            console.log('✅ setupPlayerManagement executado');
-                        }
-                    } catch (e) {
-                        console.log('⚠️ setupPlayerManagement não acessível:', e.message);
-                    }
-                    
-                    // 3. Forçar re-execução dos event listeners através de eventos DOM
-                    triggerGameSystemInitialization();
-                    
-                }, 500);
-                
-                // 4. CONFIGURAR BOTÕES ESPECÍFICOS QUE PRECISAM SER RESTAURADOS
-                setTimeout(function() {
-                    console.log('🔧 Configurando botões específicos...');
-                    
-                    // Configurar botão de adicionar jogador
-                    configureAddPlayerButton();
-                    
-                    // 5. BOTÃO VOLTAR AOS TIMES
-                    configureBackToTeamsButton();
-                    
-                    console.log('🎉 Todos os event listeners configurados para jogo restaurado!');
-                }, 1000);
-            }
-
-            function configureBackToTeamsButton() {
-                console.log('🔙 Configurando botão Voltar aos Times...');
-                
-                var backToStep4Btn = document.getElementById('backToStep4');
-                if (!backToStep4Btn) {
-                    console.log('❌ Botão backToStep4 não encontrado');
-                    return;
-                }
-                
-                // Remover event listeners anteriores
-                var newBackBtn = backToStep4Btn.cloneNode(true);
-                backToStep4Btn.parentNode.replaceChild(newBackBtn, backToStep4Btn);
-                
-                // Adicionar novo event listener
-                newBackBtn.addEventListener('click', function() {
-                    console.log('🔙 Botão Voltar aos Times clicado');
-                    console.log('📊 currentTeams disponível:', currentTeams ? currentTeams.length : 'NENHUM');
-                    console.log('🏷️ teamNames disponível:', teamNames ? teamNames.length : 'NENHUM');
-                    
-                    // Ir para step 4
-                    goToStep4WithTeams();
-                });
-                
-                console.log('✅ Botão Voltar aos Times configurado');
-            }
-
-            function goToStep4WithTeams() {
-                console.log('🏆 Indo para Step 4 com times...');
-                
-                // Verificar se temos times para mostrar
-                if (!currentTeams || currentTeams.length === 0) {
-                    console.log('❌ Nenhum time sorteado encontrado');
-                    alert('❌ Erro: Nenhum time sorteado encontrado!\n\nVocê precisa sortear os times primeiro.');
-                    return;
-                }
-                
-                console.log('✅ Times encontrados:', currentTeams.length);
-                
-                // Mudar para step 4 manualmente
-                var steps = document.querySelectorAll('.step');
-                var stepDots = document.querySelectorAll('.step-dot');
-                
-                // Desativar todos os steps
-                for (var i = 0; i < steps.length; i++) {
-                    steps[i].classList.remove('active');
-                }
-                for (var i = 0; i < stepDots.length; i++) {
-                    stepDots[i].classList.remove('active');
-                }
-                
-                // Ativar step 4
-                var step4Element = document.getElementById('step4');
-                var dot4Element = document.querySelector('.step-dot[data-step="4"]');
-                
-                if (step4Element) {
-                    step4Element.classList.add('active');
-                    console.log('✅ Step 4 ativado');
-                }
-                if (dot4Element) {
-                    dot4Element.classList.add('active');
-                    console.log('✅ Dot 4 ativado');
-                }
-                
-                // Aguardar um pouco e então popular os times
-                setTimeout(function() {
-                    displayTeamsForStep4();
-                }, 300);
-            }
-
-            function displayTeamsForStep4() {
-                console.log('🏆 Exibindo times no Step 4...');
-                
-                var teamsResult = document.getElementById('teamsResult');
-                if (!teamsResult) {
-                    console.log('❌ Elemento teamsResult não encontrado');
-                    return;
-                }
-                
-                if (!currentTeams || currentTeams.length === 0) {
-                    console.log('❌ Nenhum time para exibir');
-                    teamsResult.innerHTML = '<p style="text-align: center; color: #666;">Nenhum time sorteado encontrado.</p>';
-                    return;
-                }
-                
-                console.log('🔧 Reconstruindo exibição dos times...');
-                teamsResult.innerHTML = '';
-                
-                for (var i = 0; i < currentTeams.length; i++) {
-                    var team = currentTeams[i];
-                    var teamCard = document.createElement('div');
-                    teamCard.className = 'team-card';
-                    
-                    // Nome do time
-                    var teamName = 'Time ' + (i + 1);
-                    if (teamNames && teamNames[i]) {
-                        teamName = teamNames[i];
-                    }
-                    
-                    // Calcular média do time
-                    var teamSum = 0;
-                    for (var j = 0; j < team.length; j++) {
-                        teamSum += team[j].rating || 3;
-                    }
-                    var teamAvg = (teamSum / team.length).toFixed(1);
-                    
-                    // Criar conteúdo do card
-                    var teamContent = '<div class="team-header">';
-                    teamContent += '<h3 class="team-name">' + teamName + '</h3>';
-                    teamContent += '<div class="team-rating">Média: ' + teamAvg + '</div>';
-                    teamContent += '</div>';
-                    
-                    // Ordenar jogadores (goleiros primeiro, depois por rating)
-                    var sortedTeam = team.slice().sort(function(a, b) {
-                        if (a.isGoalkeeper && !b.isGoalkeeper) return -1;
-                        if (!a.isGoalkeeper && b.isGoalkeeper) return 1;
-                        return (b.rating || 3) - (a.rating || 3);
-                    });
-                    
-                    teamContent += '<div class="team-players">';
-                    for (var j = 0; j < sortedTeam.length; j++) {
-                        var player = sortedTeam[j];
-                        var playerClass = '';
-                        var playerDisplayName = player.name;
-                        
-                        if (player.isGoalkeeper) {
-                            if (player.isMakeshift) {
-                                playerClass = 'makeshift-goalkeeper';
-                                playerDisplayName += ' (Goleiro Improvisado)';
-                            } else {
-                                playerClass = 'goalkeeper';
-                            }
-                        }
-                        
-                        if (player.isFake) {
-                            playerClass = 'fake-player';
-                        }
-                        
-                        teamContent += '<div class="player-item">';
-                        teamContent += '<div class="player-item-name ' + playerClass + '">' + playerDisplayName + '</div>';
-                        teamContent += '<div class="player-item-rating">' + (player.rating || 3) + '</div>';
-                        teamContent += '</div>';
-                    }
-                    teamContent += '</div>';
-                    
-                    teamCard.innerHTML = teamContent;
-                    teamsResult.appendChild(teamCard);
-                    
-                    console.log('✅ Time', teamName, 'adicionado com', team.length, 'jogadores');
-                }
-                
-                console.log('🎉 Todos os times exibidos no Step 4');
-            }
-
-            function triggerGameSystemInitialization() {
-                console.log('🚀 Forçando re-inicialização do sistema...');
-                
-                // Vamos simular que o step 5 acabou de ser ativado
-                // para que todos os event listeners sejam configurados
-                
-                setTimeout(function() {
-                    // Disparar evento customizado que pode ser capturado pelo sistema original
-                    var gameInitEvent = new CustomEvent('gameSystemRestore', {
-                        detail: { restored: true }
-                    });
-                    document.dispatchEvent(gameInitEvent);
-                    
-                    // Como último recurso, vamos tentar acessar as funções através do DOM
-                    simulateOriginalFunctionality();
-                    
-                }, 200);
-            }
-
-            function simulateOriginalFunctionality() {
-                console.log('🔧 Configurando funcionalidades básicas manualmente...');
-                
-                // BOTÃO GOL - versão mínima funcional
-                var goalBtn = document.getElementById('goalBtn');
-                if (goalBtn) {
-                    // Remover listener anterior
-                    var newGoalBtn = goalBtn.cloneNode(true);
-                    goalBtn.parentNode.replaceChild(newGoalBtn, goalBtn);
-                    
-                    newGoalBtn.addEventListener('click', function() {
-                        // Versão simplificada que funciona
-                        if (!gameData.currentMatch) {
-                            alert('Nenhuma partida ativa!');
-                            return;
-                        }
-                        
-                        // Abrir modal simples para gol
-                        openSimpleGoalModal();
-                    });
-                    console.log('✅ Botão Gol configurado (versão simples)');
-                }
-                
-                // BOTÃO MOVER JOGADORES - versão funcional
-                var swapPlayersBtn = document.getElementById('swapPlayersBtn');
-                if (swapPlayersBtn) {
-                    var newSwapPlayersBtn = swapPlayersBtn.cloneNode(true);
-                    swapPlayersBtn.parentNode.replaceChild(newSwapPlayersBtn, swapPlayersBtn);
-                    
-                    newSwapPlayersBtn.addEventListener('click', function() {
-                        // Versão simplificada que funciona
-                        openSimpleSwapModal();
-                    });
-                    console.log('✅ Botão Mover Jogadores configurado (versão simples)');
-                }
-
-                // BOTÃO ADICIONAR JOGADOR - usar evento de clique direto
-                setTimeout(function() {
-                    configureAddPlayerButton();
-                }, 500);
-            }
-
-            // Nova função específica para configurar o botão Adicionar Jogador
-            function configureAddPlayerButton() {
-                var addPlayerBtn = document.getElementById('addPlayerBtn');
-                if (!addPlayerBtn) {
-                    console.log('❌ Botão Adicionar Jogador não encontrado');
-                    return;
-                }
-                
-                console.log('🔧 Configurando botão Adicionar Jogador...');
-                
-                // Verificar se já tem event listener funcionando
-                if (addPlayerBtn.onclick || addPlayerBtn.addEventListener) {
-                    // Tentar disparar um clique para testar
-                    console.log('🧪 Testando event listener existente...');
-                    
-                    // Se o event listener original não estiver funcionando, adicionar um novo
-                    var testWorked = false;
-                    
-                    // Adicionar event listener com namespace único
-                    var newListener = function(e) {
-                        console.log('🟢 Event listener do Adicionar Jogador ativado!');
-                        testWorked = true;
-                        
-                        var section = document.getElementById('addPlayerSection');
-                        if (section) {
-                            if (section.style.display === 'none' || !section.style.display) {
-                                section.style.display = 'block';
-                                var nameInput = document.getElementById('newPlayerName');
-                                if (nameInput) {
-                                    nameInput.focus();
-                                }
-                                console.log('✅ Seção de adicionar jogador aberta');
-                            } else {
-                                section.style.display = 'none';
-                                document.getElementById('newPlayerName').value = '';
-                                document.getElementById('newPlayerTeam').value = '';
-                                console.log('✅ Seção de adicionar jogador fechada');
-                            }
-                        } else {
-                            console.log('❌ Seção addPlayerSection não encontrada');
-                        }
-                    };
-                    
-                    // Remover listeners anteriores e adicionar novo
-                    var newAddPlayerBtn = addPlayerBtn.cloneNode(true);
-                    addPlayerBtn.parentNode.replaceChild(newAddPlayerBtn, addPlayerBtn);
-                    
-                    newAddPlayerBtn.addEventListener('click', newListener);
-                    
-                    console.log('✅ Event listener do botão Adicionar Jogador configurado');
-                    
-                    // Também configurar os botões de confirmar e cancelar
-                    setTimeout(function() {
-                        configureAddPlayerActions();
-                    }, 200);
-                    
-                } else {
-                    console.log('❌ Botão Adicionar Jogador não tem event listeners');
-                }
-            }
-
-            function configureAddPlayerActions() {
-                var confirmAddPlayer = document.getElementById('confirmAddPlayer');
-                var cancelAddPlayer = document.getElementById('cancelAddPlayer');
-                
-                if (confirmAddPlayer) {
-                    var newConfirmBtn = confirmAddPlayer.cloneNode(true);
-                    confirmAddPlayer.parentNode.replaceChild(newConfirmBtn, confirmAddPlayer);
-                    
-                    newConfirmBtn.addEventListener('click', function() {
-                        console.log('🟢 Botão Confirmar Adicionar clicado');
-                        
-                        var name = document.getElementById('newPlayerName').value.trim();
-                        var teamId = parseInt(document.getElementById('newPlayerTeam').value);
-                        
-                        if (!name) {
-                            alert('Digite o nome do jogador!');
-                            return;
-                        }
-                        
-                        if (!teamId) {
-                            alert('Selecione um time!');
-                            return;
-                        }
-                        
-                        var team = gameData.teams.find(function(t) { return t.id === teamId; });
-                        if (!team) {
-                            alert('Time não encontrado!');
-                            return;
-                        }
-                        
-                        var newPlayer = {
-                            name: name,
-                            rating: 3,
-                            isGoalkeeper: false,
-                            isFake: false,
-                            originalTeam: teamId,
-                            currentTeam: teamId,
-                            isNew: true
-                        };
-                        
-                        team.players.push(newPlayer);
-                        
-                        // Atualizar partida ativa se necessário
-                        if (gameData.currentMatch && (gameData.currentMatch.team1.id === teamId || gameData.currentMatch.team2.id === teamId)) {
-                            // Adicionar à partida ativa
-                            if (gameData.currentMatch.team1.id === teamId) {
-                                gameData.currentMatch.team1.players.push(newPlayer);
-                            }
-                            if (gameData.currentMatch.team2.id === teamId) {
-                                gameData.currentMatch.team2.players.push(newPlayer);
-                            }
-                            
-                            populatePlayersListRestored();
-                        }
-                        
-                        // Fechar seção
-                        document.getElementById('addPlayerSection').style.display = 'none';
-                        document.getElementById('newPlayerName').value = '';
-                        document.getElementById('newPlayerTeam').value = '';
-                        
-                        alert('✅ Jogador ' + name + ' adicionado ao time ' + team.name + '!');
-                        
-                        console.log('✅ Jogador adicionado com sucesso:', newPlayer);
-                    });
-                    
-                    console.log('✅ Botão Confirmar Adicionar configurado');
-                }
-                
-                if (cancelAddPlayer) {
-                    var newCancelBtn = cancelAddPlayer.cloneNode(true);
-                    cancelAddPlayer.parentNode.replaceChild(newCancelBtn, cancelAddPlayer);
-                    
-                    newCancelBtn.addEventListener('click', function() {
-                        document.getElementById('addPlayerSection').style.display = 'none';
-                        document.getElementById('newPlayerName').value = '';
-                        document.getElementById('newPlayerTeam').value = '';
-                        console.log('✅ Adicionar jogador cancelado');
-                    });
-                    
-                    console.log('✅ Botão Cancelar Adicionar configurado');
-                }
-            }
-
-            // Modal simples para gols
-            function openSimpleGoalModal() {
-                var modal = document.getElementById('goalModal');
-                if (!modal || !gameData.currentMatch) return;
-                
-                // Reset do modal
-                selectedGoalPlayer = null;
-                document.getElementById('ownGoalCheck').checked = false;
-                document.getElementById('goalModalConfirm').disabled = true;
-                
-                // Configurar nomes dos times
-                document.getElementById('goalModalTeam1Name').textContent = gameData.currentMatch.team1.name;
-                document.getElementById('goalModalTeam2Name').textContent = gameData.currentMatch.team2.name;
-                
-                // Popular jogadores team 1
-                var team1Container = document.getElementById('goalModalTeam1Players');
-                team1Container.innerHTML = '';
-                gameData.currentMatch.team1.players.forEach(function(player) {
-                    if (!player.isFake) {
-                        var playerDiv = document.createElement('div');
-                        playerDiv.className = 'goal-modal-player';
-                        playerDiv.textContent = player.name;
-                        playerDiv.onclick = function() { 
-                            selectGoalPlayerSimple(player, 1, playerDiv); 
-                        };
-                        team1Container.appendChild(playerDiv);
-                    }
-                });
-                
-                // Popular jogadores team 2
-                var team2Container = document.getElementById('goalModalTeam2Players');
-                team2Container.innerHTML = '';
-                gameData.currentMatch.team2.players.forEach(function(player) {
-                    if (!player.isFake) {
-                        var playerDiv = document.createElement('div');
-                        playerDiv.className = 'goal-modal-player';
-                        playerDiv.textContent = player.name;
-                        playerDiv.onclick = function() { 
-                            selectGoalPlayerSimple(player, 2, playerDiv); 
-                        };
-                        team2Container.appendChild(playerDiv);
-                    }
-                });
-                
-                // Configurar assistências
-                var assistSelect = document.getElementById('assistSelect');
-                assistSelect.innerHTML = '<option value="">Nenhuma assistência</option>';
-                
-                modal.style.display = 'block';
-            }
-
-            function selectGoalPlayerSimple(player, team, element) {
-                // Remover seleções anteriores
-                var allPlayers = document.querySelectorAll('.goal-modal-player');
-                allPlayers.forEach(function(p) { p.classList.remove('selected'); });
-                
-                // Marcar seleção atual
-                element.classList.add('selected');
-                selectedGoalPlayer = { player: player, team: team };
-                
-                // Habilitar botão confirmar
-                document.getElementById('goalModalConfirm').disabled = false;
-                
-                // Popular assistências do mesmo time
-                var assistSelect = document.getElementById('assistSelect');
-                assistSelect.innerHTML = '<option value="">Nenhuma assistência</option>';
-                
-                var teamPlayers = team === 1 ? gameData.currentMatch.team1.players : gameData.currentMatch.team2.players;
-                teamPlayers.forEach(function(p) {
-                    if (!p.isFake && p.name !== player.name) {
-                        var option = document.createElement('option');
-                        option.value = p.name;
-                        option.textContent = p.name;
-                        assistSelect.appendChild(option);
-                    }
-                });
-            }
-
-            // Modal completo para troca de jogadores
-            function openSimpleSwapModal() {
-                var modal = document.getElementById('playerSwapModal');
-                if (!modal) return;
-                
-                // Popular times para troca
-                populateTeamsForSwapSimple();
-                modal.style.display = 'block';
-            }
-
-            function populateTeamsForSwapSimple() {
-                var teamsGrid = document.getElementById('swapTeamsGrid');
-                if (!teamsGrid) return;
-                
-                teamsGrid.innerHTML = '';
-                
-                var gameType = document.getElementById('gameType') ? document.getElementById('gameType').value : 'futsal';
-                var minPlayers = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                
-                gameData.teams.forEach(function(team) {
-                    var teamSection = document.createElement('div');
-                    teamSection.className = 'swap-team-section';
-                    
-                    var realPlayers = team.players.filter(function(p) { return !p.isFake; });
-                    var playersCount = realPlayers.length;
-                    
-                    var countClass = playersCount < minPlayers ? 'warning-text' : '';
-                    var countText = playersCount + ' jogador' + (playersCount !== 1 ? 'es' : '');
-                    if (playersCount < minPlayers) {
-                        countText += ' (Mín: ' + minPlayers + ')';
-                    }
-                    
-                    teamSection.innerHTML = '<h5>' + team.name + '</h5>' +
-                                        '<div class="team-players-count ' + countClass + '">' + countText + '</div>' +
-                                        '<div id="team_' + team.id + '_players"></div>';
-                    
-                    var playersContainer = teamSection.querySelector('#team_' + team.id + '_players');
-                    
-                    realPlayers.forEach(function(player) {
-                        var playerDiv = document.createElement('div');
-                        playerDiv.className = 'swap-player-item';
-                        
-                        // Nome do jogador
-                        var playerNameDiv = document.createElement('div');
-                        playerNameDiv.innerHTML = '<strong>' + player.name + '</strong>';
-                        playerDiv.appendChild(playerNameDiv);
-                        
-                        // Container para os botões
-                        var buttonsContainer = document.createElement('div');
-                        buttonsContainer.style.marginTop = '5px';
-                        
-                        // Botão de deletar
-                        var deleteButton = document.createElement('button');
-                        deleteButton.className = 'delete-player-btn';
-                        deleteButton.textContent = '🗑️ Deletar';
-                        deleteButton.onclick = function() {
-                            deletePlayerSimple(player.name, team.id, team.name);
-                        };
-                        buttonsContainer.appendChild(deleteButton);
-                        
-                        // Botões para mover para outros times
-                        gameData.teams.forEach(function(targetTeam) {
-                            if (targetTeam.id !== team.id) {
-                                var moveButton = document.createElement('button');
-                                moveButton.className = 'move-player-btn';
-                                moveButton.style.margin = '2px';
-                                moveButton.style.fontSize = '10px';
-                                moveButton.textContent = '→ ' + targetTeam.name;
-                                
-                                moveButton.onclick = function() {
-                                    movePlayerSimple(player.name, team.id, targetTeam.id, team.name, targetTeam.name);
-                                };
-                                
-                                buttonsContainer.appendChild(moveButton);
-                            }
-                        });
-                        
-                        playerDiv.appendChild(buttonsContainer);
-                        playersContainer.appendChild(playerDiv);
-                    });
-                    
-                    teamsGrid.appendChild(teamSection);
-                });
-            }
-
-            function deletePlayerSimple(playerName, teamId, teamName) {
-                if (!confirm('ATENÇÃO: Tem certeza que deseja DELETAR o jogador "' + playerName + '" do time "' + teamName + '"?\n\nEsta ação não pode ser desfeita!')) {
-                    return;
-                }
-                
-                var team = gameData.teams.find(function(t) { return t.id === teamId; });
-                if (!team) return;
-                
-                // Remover do time global
-                var playerIndex = team.players.findIndex(function(p) { return p.name === playerName; });
-                if (playerIndex !== -1) {
-                    team.players.splice(playerIndex, 1);
-                }
-                
-                // Remover da partida ativa se necessário
-                if (gameData.currentMatch) {
-                    if (gameData.currentMatch.team1.id === teamId) {
-                        var matchPlayerIndex = gameData.currentMatch.team1.players.findIndex(function(p) { return p.name === playerName; });
-                        if (matchPlayerIndex !== -1) {
-                            gameData.currentMatch.team1.players.splice(matchPlayerIndex, 1);
-                        }
-                    }
-                    
-                    if (gameData.currentMatch.team2.id === teamId) {
-                        var matchPlayerIndex = gameData.currentMatch.team2.players.findIndex(function(p) { return p.name === playerName; });
-                        if (matchPlayerIndex !== -1) {
-                            gameData.currentMatch.team2.players.splice(matchPlayerIndex, 1);
-                        }
-                    }
-                    
-                    // Atualizar interface da partida
-                    populatePlayersListRestored();
-                }
-                
-                // Atualizar modal
-                populateTeamsForSwapSimple();
-                
-                alert('Jogador ' + playerName + ' foi deletado do time ' + teamName + '!');
-            }
-
-            function movePlayerSimple(playerName, sourceTeamId, targetTeamId, sourceTeamName, targetTeamName) {
-                var sourceTeam = gameData.teams.find(function(t) { return t.id === sourceTeamId; });
-                var targetTeam = gameData.teams.find(function(t) { return t.id === targetTeamId; });
-                
-                if (!sourceTeam || !targetTeam) return;
-                
-                // Encontrar e remover jogador do time atual
-                var playerIndex = sourceTeam.players.findIndex(function(p) { return p.name === playerName; });
-                if (playerIndex === -1) return;
-                
-                var player = sourceTeam.players.splice(playerIndex, 1)[0];
-                player.currentTeam = targetTeam.id;
-                
-                // Adicionar ao novo time
-                targetTeam.players.push(player);
-                
-                // Atualizar partida ativa se necessário
-                if (gameData.currentMatch) {
-                    // Remover do time ativo atual
-                    if (gameData.currentMatch.team1.id === sourceTeamId) {
-                        var matchPlayerIndex = gameData.currentMatch.team1.players.findIndex(function(p) { return p.name === playerName; });
-                        if (matchPlayerIndex !== -1) {
-                            gameData.currentMatch.team1.players.splice(matchPlayerIndex, 1);
-                        }
-                    }
-                    
-                    if (gameData.currentMatch.team2.id === sourceTeamId) {
-                        var matchPlayerIndex = gameData.currentMatch.team2.players.findIndex(function(p) { return p.name === playerName; });
-                        if (matchPlayerIndex !== -1) {
-                            gameData.currentMatch.team2.players.splice(matchPlayerIndex, 1);
-                        }
-                    }
-                    
-                    // Adicionar ao time ativo de destino
-                    if (gameData.currentMatch.team1.id === targetTeamId) {
-                        var existingPlayerIndex = gameData.currentMatch.team1.players.findIndex(function(p) { return p.name === playerName; });
-                        if (existingPlayerIndex === -1) {
-                            gameData.currentMatch.team1.players.push(player);
-                        }
-                    }
-                    
-                    if (gameData.currentMatch.team2.id === targetTeamId) {
-                        var existingPlayerIndex = gameData.currentMatch.team2.players.findIndex(function(p) { return p.name === playerName; });
-                        if (existingPlayerIndex === -1) {
-                            gameData.currentMatch.team2.players.push(player);
-                        }
-                    }
-                    
-                    // Atualizar interface da partida
-                    populatePlayersListRestored();
-                }
-                
-                // Atualizar modal
-                populateTeamsForSwapSimple();
-                
-                alert('✅ Jogador ' + playerName + ' movido de ' + sourceTeamName + ' para ' + targetTeamName + '!');
-            }
-
-            // Configurar botão de fechar do modal de troca
-            setTimeout(function() {
-                var cancelSwapBtn = document.getElementById('cancelSwapBtn');
-                if (cancelSwapBtn && !cancelSwapBtn.onclick) {
-                    cancelSwapBtn.onclick = function() {
-                        // Verificar se há times com poucos jogadores
-                        var gameType = document.getElementById('gameType') ? document.getElementById('gameType').value : 'futsal';
-                        var minPlayers = gameType === 'futsal' ? 5 : parseInt(document.getElementById('societyPlayers').value);
-                        
-                        var teamsWithFewPlayers = [];
-                        gameData.teams.forEach(function(team) {
-                            var realPlayers = team.players.filter(function(p) { return !p.isFake; });
-                            if (realPlayers.length < minPlayers) {
-                                teamsWithFewPlayers.push({
-                                    name: team.name,
-                                    playerCount: realPlayers.length,
-                                    minPlayers: minPlayers
-                                });
-                            }
-                        });
-                        
-                        if (teamsWithFewPlayers.length > 0) {
-                            var warningMessage = '⚠️ ATENÇÃO: Os seguintes times estão com poucos jogadores:\n\n';
-                            teamsWithFewPlayers.forEach(function(team) {
-                                warningMessage += '• ' + team.name + ': ' + team.playerCount + '/' + team.minPlayers + ' jogadores\n';
-                            });
-                            warningMessage += '\nDeseja continuar mesmo assim?';
-                            
-                            if (confirm(warningMessage)) {
-                                document.getElementById('playerSwapModal').style.display = 'none';
-                            }
-                        } else {
-                            document.getElementById('playerSwapModal').style.display = 'none';
-                        }
-                    };
-                }
-            }, 1000);
-
-            // Configurar modais se ainda não estiverem configurados
-            setTimeout(function() {
-                var goalModalCancel = document.getElementById('goalModalCancel');
-                var goalModalConfirm = document.getElementById('goalModalConfirm');
-                
-                if (goalModalCancel && !goalModalCancel.onclick) {
-                    goalModalCancel.onclick = function() {
-                        document.getElementById('goalModal').style.display = 'none';
-                        selectedGoalPlayer = null;
-                    };
-                }
-                
-                if (goalModalConfirm && !goalModalConfirm.onclick) {
-                    goalModalConfirm.onclick = function() {
-                        if (!selectedGoalPlayer) return;
-                        
-                        var isOwnGoal = document.getElementById('ownGoalCheck').checked;
-                        var assistPlayer = document.getElementById('assistSelect').value;
-                        
-                        // Adicionar gol usando lógica simplificada
-                        addGoalSimple(selectedGoalPlayer, isOwnGoal, assistPlayer);
-                        
-                        document.getElementById('goalModal').style.display = 'none';
-                    };
-                }
-            }, 1000);
-
-            function addGoalSimple(goalData, isOwnGoal, assist) {
-                var match = gameData.currentMatch;
-                if (!match.goals) match.goals = [];
-                
-                var goalPlayerTeamName = goalData.team === 1 ? match.team1.name : match.team2.name;
-                
-                var goal = {
-                    player: goalData.player.name,
-                    playerTeam: goalPlayerTeamName,
-                    type: isOwnGoal ? 'own' : 'normal',
-                    time: gameData.timer.minutes + ':' + String(gameData.timer.seconds).padStart(2, '0'),
-                    team: goalData.team,
-                    assist: assist || null
-                };
-                
-                match.goals.push(goal);
-                
-                // Atualizar placar
-                if (isOwnGoal) {
-                    if (goalData.team === 1) {
-                        match.score2++;
-                    } else {
-                        match.score1++;
-                    }
-                } else {
-                    if (goalData.team === 1) {
-                        match.score1++;
-                    } else {
-                        match.score2++;
-                    }
-                }
-                
-                // Atualizar interface
-                document.getElementById('team1Score').textContent = match.score1;
-                document.getElementById('team2Score').textContent = match.score2;
-                
-                // Atualizar contador do jogador
-                if (!isOwnGoal) {
-                    var playerGoalSpan = document.getElementById('goals-' + goalData.player.name.replace(/\s+/g, ''));
-                    if (playerGoalSpan) {
-                        var currentGoals = parseInt(playerGoalSpan.textContent) || 0;
-                        playerGoalSpan.textContent = currentGoals + 1;
-                    }
-                }
-                
-                // Atualizar histórico
-                updateGoalHistoryRestored();
-                
-                console.log('⚽ Gol adicionado:', goal);
-            }
-
-            // Função para popular lista de jogadores restaurada
-            function populatePlayersListRestored() {
-                var team1Players = document.getElementById('team1Players');
-                var team2Players = document.getElementById('team2Players');
-                
-                if (!team1Players || !team2Players || !gameData.currentMatch) return;
-                
-                team1Players.innerHTML = '';
-                team2Players.innerHTML = '';
-                
-                var match = gameData.currentMatch;
-                
-                // Team 1
-                if (match.team1.players) {
-                    match.team1.players.forEach(function(player) {
-                        if (!player.isFake) {
-                            var playerDiv = document.createElement('div');
-                            playerDiv.className = 'player-item-game';
-                            
-                            var goalCount = 0;
-                            if (match.goals) {
-                                match.goals.forEach(function(goal) {
-                                    if (goal.player === player.name && goal.type !== 'own') {
-                                        goalCount++;
-                                    }
-                                });
-                            }
-                            
-                            playerDiv.innerHTML = '<span>' + player.name + '</span><span class="player-goals" id="goals-' + 
-                                player.name.replace(/\s+/g, '') + '">' + goalCount + '</span>';
-                            team1Players.appendChild(playerDiv);
-                        }
-                    });
-                }
-                
-                // Team 2
-                if (match.team2.players) {
-                    match.team2.players.forEach(function(player) {
-                        if (!player.isFake) {
-                            var playerDiv = document.createElement('div');
-                            playerDiv.className = 'player-item-game';
-                            
-                            var goalCount = 0;
-                            if (match.goals) {
-                                match.goals.forEach(function(goal) {
-                                    if (goal.player === player.name && goal.type !== 'own') {
-                                        goalCount++;
-                                    }
-                                });
-                            }
-                            
-                            playerDiv.innerHTML = '<span>' + player.name + '</span><span class="player-goals" id="goals-' + 
-                                player.name.replace(/\s+/g, '') + '">' + goalCount + '</span>';
-                            team2Players.appendChild(playerDiv);
-                        }
-                    });
-                }
-            }
-
-            // Função para atualizar histórico de gols
-            function updateGoalHistoryRestored() {
-                var goalsList = document.getElementById('goalsList');
-                if (!goalsList || !gameData.currentMatch || !gameData.currentMatch.goals) return;
-                
-                goalsList.innerHTML = '';
-                
-                gameData.currentMatch.goals.forEach(function(goal) {
-                    var goalDiv = document.createElement('div');
-                    goalDiv.className = 'goal-item';
-                    
-                    var goalText = goal.time + ' - ' + goal.player + ' (' + goal.playerTeam + ')';
-                    if (goal.type === 'own') {
-                        goalText += ' (Gol Contra)';
-                    }
-                    if (goal.assist) {
-                        goalText += ' (Assist: ' + goal.assist + ')';
-                    }
-                    
-                    goalDiv.textContent = goalText;
-                    goalsList.appendChild(goalDiv);
-                });
-            }
-
-            // Função para popular select de times
-            function populateNewPlayerTeamSelectRestored() {
-                var newPlayerTeamSelect = document.getElementById('newPlayerTeam');
-                if (!newPlayerTeamSelect || !gameData.teams) return;
-                
-                newPlayerTeamSelect.innerHTML = '<option value="">Selecione o time</option>';
-                
-                gameData.teams.forEach(function(team) {
-                    var option = document.createElement('option');
-                    option.value = team.id;
-                    option.textContent = team.name;
-                    newPlayerTeamSelect.appendChild(option);
-                });
             }
 
             function restoreGameState(savedState) {
@@ -3815,37 +2289,6 @@
                 }
                 
                 updatePlayerCounter();
-            }
-
-            // Função para verificar se todas as funções necessárias existem
-            function verifyRequiredFunctions() {
-                console.log('🔍 VERIFICANDO FUNÇÕES NECESSÁRIAS...');
-                
-                var functions = [
-                    'showStep',
-                    'displayTeams', 
-                    'initializeGameSystem',
-                    'updatePlayerCounter'
-                ];
-                
-                var missing = [];
-                
-                functions.forEach(function(funcName) {
-                    if (typeof window[funcName] === 'function') {
-                        console.log('✅', funcName, 'encontrada');
-                    } else {
-                        console.error('❌', funcName, 'NÃO encontrada');
-                        missing.push(funcName);
-                    }
-                });
-                
-                if (missing.length > 0) {
-                    console.error('🚨 FUNÇÕES FALTANDO:', missing);
-                    return false;
-                }
-                
-                console.log('✅ Todas as funções necessárias estão disponíveis');
-                return true;
             }
 
             async function saveGameToHistory(gameResult) {
@@ -5322,38 +3765,15 @@
 	            }
 	
 	            function selectGoalPlayer(player, team) {
-                    // Adicionar seleção atual
-                    event.target.classList.add('selected');
-                    selectedGoalPlayer = { player: player, team: team };
-                    
-                    // Habilitar botão confirmar
-                    document.getElementById('goalModalConfirm').disabled = false;
-                    
-                    // Popular assistências
-                    var assistSelect = document.getElementById('assistSelect');
-                    assistSelect.innerHTML = '<option value="">Nenhuma assistência</option>';
-                    
-                    // Determinar jogadores do mesmo time para assistência
-                    var teamPlayers;
-                    if (team === 1) {
-                        teamPlayers = gameData.currentMatch.team1.players;
-                    } else {
-                        teamPlayers = gameData.currentMatch.team2.players;
-                    }
-                    
-                    var eligiblePlayers = teamPlayers.filter(function(p) { 
-                        return !p.isFake && p.name !== player.name; 
-                    }).sort(function(a, b) {
-                        return a.name.localeCompare(b.name);
-                    });
-                    
-                    eligiblePlayers.forEach(function(p) {
-                        var option = document.createElement('option');
-                        option.value = p.name;
-                        option.textContent = p.name;
-                        assistSelect.appendChild(option);
-                    });
-                }
+	                var allPlayers = document.querySelectorAll('.goal-modal-player');
+	                allPlayers.forEach(function(p) { p.classList.remove('selected'); });
+	                
+	                event.target.classList.add('selected');
+	                selectedGoalPlayer = { player: player, team: team };
+	                
+	                populateAssistSelect();
+	                document.getElementById('goalModalConfirm').disabled = false;
+	            }
 	
 	            function populateAssistSelect() {
                     var assistSelect = document.getElementById('assistSelect');
@@ -5385,7 +3805,7 @@
                         assistSelect.appendChild(option);
                     });
                 }
-
+	
 	            function updateAssistOptions() {
 	                populateAssistSelect();
 	            }
@@ -5416,6 +3836,7 @@
             function addGoalFromModal(goalData) {
                 var match = gameData.currentMatch;
                 
+                // Determinar nome do time do jogador que fez o gol
                 var goalPlayerTeamName = goalData.team === 1 ? match.team1.name : match.team2.name;
                 
                 var goal = {
@@ -5427,10 +3848,8 @@
                     assist: goalData.assist
                 };
                 
-                if (!match.goals) match.goals = [];
                 match.goals.push(goal);
                 
-                // Atualizar placar
                 if (goalData.isOwnGoal) {
                     if (goalData.team === 1) {
                         match.score2++;
@@ -5445,36 +3864,15 @@
                     }
                 }
                 
-                // Atualizar interface
-                document.getElementById('team1Score').textContent = match.score1;
-                document.getElementById('team2Score').textContent = match.score2;
+                updateScoreboard();
+                updateGoalHistory();
+                updatePlayerGoals(goalData.player.name);
                 
-                // Atualizar contador de gols do jogador
-                var playerGoalSpan = document.getElementById('goals-' + goalData.player.name.replace(/\s+/g, ''));
-                if (playerGoalSpan && !goalData.isOwnGoal) {
-                    var currentGoals = parseInt(playerGoalSpan.textContent) || 0;
-                    playerGoalSpan.textContent = currentGoals + 1;
+                if (gameData.gameMode === 'timed' && 
+                    (match.score1 >= gameData.goalLimit || match.score2 >= gameData.goalLimit)) {
+                    endMatch('goals');
                 }
-                
-                // Atualizar histórico
-                var goalsList = document.getElementById('goalsList');
-                if (goalsList) {
-                    var goalDiv = document.createElement('div');
-                    goalDiv.className = 'goal-item';
-                    
-                    var goalText = goal.time + ' - ' + goal.player + ' (' + goal.playerTeam + ')';
-                    if (goal.type === 'own') {
-                        goalText += ' (Gol Contra)';
-                    }
-                    if (goal.assist) {
-                        goalText += ' (Assist: ' + goal.assist + ')';
-                    }
-                    
-                    goalDiv.textContent = goalText;
-                    goalsList.appendChild(goalDiv);
-                }
-                
-                console.log('⚽ Gol adicionado:', goal);
+                if (currentUser) saveCurrentGameState();
             }
             
             function populateTeamSelects() {
@@ -5580,7 +3978,6 @@
                     }
                     
                     populatePlayersList();
-                    if (currentUser) saveCurrentGameState();
                     resetTimer();
                     
                     // Mostrar seção de gerenciamento
@@ -5892,26 +4289,24 @@
 	            });
 	            
 	            function generateTournamentReport() {
-                    console.log('🏆 Gerando relatório do torneio...');
-                    
-                    var report = '🏆 RELATÓRIO DO TORNEIO 🏆\n\n';
-                    
-                    var sortedTeams = gameData.teams.slice().sort(function(a, b) {
-                        if (b.points !== a.points) return b.points - a.points;
-                        var saldoA = a.goals - a.goalsAgainst;
-                        var saldoB = b.goals - b.goalsAgainst;
-                        if (saldoB !== saldoA) return saldoB - saldoA;
-                        return b.goals - a.goals;
-                    });
-                    
-                    report += '📊 CLASSIFICAÇÃO FINAL:\n';
-                    sortedTeams.forEach(function(team, index) {
-                        var saldo = team.goals - team.goalsAgainst;
-                        report += (index + 1) + 'º ' + team.name + ' - ' + team.points + ' pts';
-                        report += ' (J:' + team.matches + ' SG:' + saldo + ')\n';
-                    });
-                    
-                    if (gameData.tournamentStats.playerGoals) {
+	                var report = '🏆 RELATÓRIO DO TORNEIO 🏆\n\n';
+	                
+	                var sortedTeams = gameData.teams.slice().sort(function(a, b) {
+	                    if (b.points !== a.points) return b.points - a.points;
+	                    var saldoA = a.goals - a.goalsAgainst;
+	                    var saldoB = b.goals - b.goalsAgainst;
+	                    if (saldoB !== saldoA) return saldoB - saldoA;
+	                    return b.goals - a.goals;
+	                });
+	                
+	                report += '📊 CLASSIFICAÇÃO FINAL:\n';
+	                sortedTeams.forEach(function(team, index) {
+	                    var saldo = team.goals - team.goalsAgainst;
+	                    report += (index + 1) + 'º ' + team.name + ' - ' + team.points + ' pts';
+	                    report += ' (J:' + team.matches + ' SG:' + saldo + ')\n';
+	                });
+	                
+	                if (gameData.tournamentStats.playerGoals) {
                         var topScorers = Object.keys(gameData.tournamentStats.playerGoals)
                             .map(function(player) {
                                 return { 
@@ -5958,131 +4353,93 @@
                             });
                         }
                     }
-                    
-                    if (gameData.tournamentStats.playerAssists) {
-                        var topAssisters = Object.keys(gameData.tournamentStats.playerAssists)
-                            .map(function(player) {
-                                return { 
-                                    name: player, 
-                                    assists: gameData.tournamentStats.playerAssists[player] 
-                                };
-                            })
-                            .sort(function(a, b) { return b.assists - a.assists; });
-                        
-                        if (topAssisters.length > 0) {
-                            report += '\n🅰️ ASSISTÊNCIAS:\n';
-                            topAssisters.forEach(function(assister, index) {
-                                report += (index + 1) + 'º ' + assister.name + ' - ' + assister.assists + ' assist';
-                                if (assister.assists !== 1) report += 's';
-                                report += '\n';
-                            });
-                        }
-                    }
-                    
-                    if (gameData.matches.length > 0) {
-                        report += '\n📋 HISTÓRICO DE JOGOS:\n';
-                        gameData.matches.forEach(function(match, index) {
-                            report += (index + 1) + '. ' + match.team1.name + ' ' + match.score1;
-                            report += ' x ' + match.score2 + ' ' + match.team2.name;
-                            if (match.winner) {
-                                report += ' (Venceu: ' + match.winner.name + ')';
-                            } else {
-                                report += ' (Empate)';
-                            }
-                            report += '\n';
-                            
-                            // Adicionar gols se houver
-                            if (match.goals && match.goals.length > 0) {
-                                match.goals.forEach(function(goal) {
-                                    report += '  ⚽ ' + goal.time + ' - ' + goal.player + ' (' + goal.playerTeam + ')';
-                                    if (goal.type === 'own') report += ' (Gol Contra)';
-                                    if (goal.assist) report += ' (Assist: ' + goal.assist + ')';
-                                    report += '\n';
-                                });
-                            }
+	                
+	                if (gameData.tournamentStats.playerAssists) {
+	                    var topAssisters = Object.keys(gameData.tournamentStats.playerAssists)
+	                        .map(function(player) {
+	                            return { 
+	                                name: player, 
+	                                assists: gameData.tournamentStats.playerAssists[player] 
+	                            };
+	                        })
+	                        .sort(function(a, b) { return b.assists - a.assists; });
+	                    
+	                    if (topAssisters.length > 0) {
+	                        report += '\n🅰️ ASSISTÊNCIAS:\n';
+	                        topAssisters.forEach(function(assister, index) {
+                            report += (index + 1) + 'º ' + assister.name + ' - ' + assister.assists + ' assist';
+                            if (assister.assists !== 1) report += 's';
                             report += '\n';
                         });
                     }
-                    
-                    report += '\n🎲 Sorteio gerado pelo sistema automático';
-                    
-                    // SALVAR NO HISTÓRICO PRIMEIRO
-                    if (currentUser) {
-                        const completeGameResult = {
-                            teams: gameData.teams.map(t => t.name).join(' vs '),
-                            description: 'Torneio completo finalizado',
-                            finalScore: gameData.matches.length > 0 ? 
-                                `${gameData.matches.length} partidas realizadas` : 
-                                'Torneio completo',
-                            duration: 'Múltiplas partidas',
-                            tournamentStats: gameData.tournamentStats,
-                            matches: gameData.matches,
-                            teamsData: gameData.teams.map(team => ({
-                                name: team.name,
-                                points: team.points,
-                                goals: team.goals,
-                                goalsAgainst: team.goalsAgainst,
-                                matches: team.matches,
-                                players: team.players.map(p => p.name)
-                            })),
-                            gameConfig: {
-                                gameType: document.getElementById('gameType').value,
-                                numTeams: gameData.teams.length,
-                                totalPlayers: gameData.teams.reduce((total, team) => 
-                                    total + team.players.filter(p => !p.isFake).length, 0)
-                            }
-                        };
-                        
-                        saveGameToHistory(completeGameResult);
-                        console.log('💾 Torneio completo salvo no histórico!');
-                    }
-                    
-                    // PERGUNTAR SE QUER ENVIAR PARA O WHATSAPP
-                    var sendToWhatsApp = confirm(
-                        '🏆 TORNEIO FINALIZADO!\n\n' +
-                        'O relatório completo foi gerado e salvo no seu histórico.\n\n' +
-                        '📱 Deseja enviar o relatório pelo WhatsApp?'
-                    );
-                    
-                    if (sendToWhatsApp) {
-                        console.log('📱 Usuário optou por enviar para WhatsApp');
-                        
-                        // Enviar para WhatsApp
-                        var encodedMessage = encodeURIComponent(report);
-                        var whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodedMessage;
-                        window.open(whatsappUrl, '_blank');
-                        
-                        // Aguardar um pouco e então resetar
-                        setTimeout(function() {
-                            resetToInitialState();
-                        }, 2000);
-                        
-                    } else {
-                        console.log('❌ Usuário optou por não enviar para WhatsApp');
-                        
-                        // Mostrar relatório em alert e resetar
-                        alert(
-                            '✅ TORNEIO FINALIZADO!\n\n' +
-                            'O relatório completo foi salvo no seu histórico.\n\n' +
-                            'Você pode acessá-lo a qualquer momento através do botão "Mostrar Histórico".'
-                        );
-                        
-                        // Resetar imediatamente
-                        resetToInitialState();
-                    }
                 }
+                
+                if (gameData.matches.length > 0) {
+                    report += '\n📋 HISTÓRICO DE JOGOS:\n';
+                    gameData.matches.forEach(function(match, index) {
+                        report += (index + 1) + '. ' + match.team1.name + ' ' + match.score1;
+                        report += ' x ' + match.score2 + ' ' + match.team2.name;
+                        if (match.winner) {
+                            report += ' (Venceu: ' + match.winner.name + ')';
+                        } else {
+                            report += ' (Empate)';
+                        }
+                        report += '\n';
+                        
+                        // Adicionar gols se houver
+                        if (match.goals && match.goals.length > 0) {
+                            match.goals.forEach(function(goal) {
+                                report += '  ⚽ ' + goal.time + ' - ' + goal.player + ' (' + goal.playerTeam + ')';
+                                if (goal.type === 'own') report += ' (Gol Contra)';
+                                if (goal.assist) report += ' (Assist: ' + goal.assist + ')';
+                                report += '\n';
+                            });
+                        }
+                        report += '\n';
+                    });
+                }
+                
+                report += '\n🎲 Sorteio gerado pelo sistema automático';
 
-                function resetToInitialState() {
-                    console.log('🔄 Resetando para estado inicial...');
+                if (currentUser) {
+                    const completeGameResult = {
+                        teams: gameData.teams.map(t => t.name).join(' vs '),
+                        description: 'Torneio completo finalizado',
+                        finalScore: gameData.matches.length > 0 ? 
+                            `${gameData.matches.length} partidas realizadas` : 
+                            'Torneio completo',
+                        duration: 'Múltiplas partidas',
+                        tournamentStats: gameData.tournamentStats,
+                        matches: gameData.matches,
+                        teamsData: gameData.teams.map(team => ({
+                            name: team.name,
+                            points: team.points,
+                            goals: team.goals,
+                            goalsAgainst: team.goalsAgainst,
+                            matches: team.matches,
+                            players: team.players.map(p => p.name)
+                        })),
+                        gameConfig: {
+                            gameType: document.getElementById('gameType').value,
+                            numTeams: gameData.teams.length,
+                            totalPlayers: gameData.teams.reduce((total, team) => 
+                                total + team.players.filter(p => !p.isFake).length, 0)
+                        }
+                    };
                     
-                    // Limpar dados do jogo
+                    saveGameToHistory(completeGameResult);
+                    console.log('💾 Torneio completo salvo no histórico!');
+                }
+                
+                var encodedMessage = encodeURIComponent(report);
+                var whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodedMessage;
+                window.open(whatsappUrl, '_blank');
+                
+                setTimeout(function() {
                     playersInput.value = '';
-                    if (typeof updatePlayerCounter === 'function') {
-                        updatePlayerCounter();
-                    }
+                    updatePlayerCounter();
                     currentTeams = [];
                     teamNames = [];
-                    savedRatings = {};
                     gameData = {
                         teams: [],
                         matches: [],
@@ -6093,119 +4450,102 @@
                         goalLimit: 2,
                         tournamentStats: {}
                     };
-                    
-                    // Voltar para step 1
-                    var steps = document.querySelectorAll('.step');
-                    var stepDots = document.querySelectorAll('.step-dot');
-                    
-                    for (var i = 0; i < steps.length; i++) {
-                        steps[i].classList.remove('active');
-                    }
-                    for (var i = 0; i < stepDots.length; i++) {
-                        stepDots[i].classList.remove('active');
-                    }
-                    
-                    var step1Element = document.getElementById('step1');
-                    var dot1Element = document.querySelector('.step-dot[data-step="1"]');
-                    
-                    if (step1Element) step1Element.classList.add('active');
-                    if (dot1Element) dot1Element.classList.add('active');
-                    
-                    console.log('✅ Estado inicial restaurado - pronto para novo sorteio!');
-                }
-                
-                window.movePlayerToTeamFree = movePlayerToTeamFree;
-                window.deletePlayerFromTeam = deletePlayerFromTeam;
-                window.showTeamWarningModal = showTeamWarningModal;
-                window.closeTeamWarningModal = closeTeamWarningModal;
-                window.forceCloseSwapModal = forceCloseSwapModal;
+                    showStep(1);
+                }, 2000);
+            }
+            window.movePlayerToTeamFree = movePlayerToTeamFree;
+            window.deletePlayerFromTeam = deletePlayerFromTeam;
+            window.showTeamWarningModal = showTeamWarningModal;
+            window.closeTeamWarningModal = closeTeamWarningModal;
+            window.forceCloseSwapModal = forceCloseSwapModal;
 
-                // Botão para ver uso do Firebase
-                document.getElementById('verUsoFirebase').addEventListener('click', function() {
-                    contadorFirebase.verRelatorio();
-                });
+            // Botão para ver uso do Firebase
+            document.getElementById('verUsoFirebase').addEventListener('click', function() {
+                contadorFirebase.verRelatorio();
             });
+        });
+        // ADICIONE ESTE CÓDIGO NO FINAL DO SEU , ANTES da última tag 
+
+        // =========== DEBUG DOS BOTÕES - ADICIONAR NO FINAL DO SCRIPT ===========
+        console.log('🔍 INICIANDO DEBUG DOS BOTÕES...');
+
+        // 1. Verificar se os elementos existem
+        setTimeout(function() {
+            console.log('🔍 Verificando elementos...');
             
-            // =========== DEBUG DOS BOTÕES - ADICIONAR NO FINAL DO SCRIPT ===========
-            console.log('🔍 INICIANDO DEBUG DOS BOTÕES...');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const showForgotPassword = document.getElementById('showForgotPassword');
+            const backToLogin = document.getElementById('backToLogin');
+            
+            console.log('showRegister encontrado:', !!showRegister);
+            console.log('showLogin encontrado:', !!showLogin);
+            console.log('showForgotPassword encontrado:', !!showForgotPassword);
+            console.log('backToLogin encontrado:', !!backToLogin);
+            
+            // 2. Verificar se a função showAuthForm existe
+            console.log('Função showAuthForm existe:', typeof showAuthForm);
+            
+            // 3. Adicionar event listeners com debug
+            if (showRegister) {
+                showRegister.addEventListener('click', function(e) {
+                    console.log('🟢 CLIQUE EM showRegister DETECTADO!');
+                    e.preventDefault();
+                    console.log('🔄 Chamando showAuthForm("register")...');
+                    if (typeof showAuthForm === 'function') {
+                        showAuthForm('register');
+                        console.log('✅ showAuthForm("register") executado');
+                    } else {
+                        console.error('❌ showAuthForm não é uma função!');
+                    }
+                });
+                console.log('✅ Event listener adicionado ao showRegister');
+            } else {
+                console.error('❌ Elemento showRegister não encontrado!');
+            }
+            
+            if (showLogin) {
+                showLogin.addEventListener('click', function(e) {
+                    console.log('🟢 CLIQUE EM showLogin DETECTADO!');
+                    e.preventDefault();
+                    showAuthForm('login');
+                });
+                console.log('✅ Event listener adicionado ao showLogin');
+            }
+            
+            if (showForgotPassword) {
+                showForgotPassword.addEventListener('click', function(e) {
+                    console.log('🟢 CLIQUE EM showForgotPassword DETECTADO!');
+                    e.preventDefault();
+                    showAuthForm('forgot');
+                });
+                console.log('✅ Event listener adicionado ao showForgotPassword');
+            }
+            
+            if (backToLogin) {
+                backToLogin.addEventListener('click', function(e) {
+                    console.log('🟢 CLIQUE EM backToLogin DETECTADO!');
+                    e.preventDefault();
+                    showAuthForm('login');
+                });
+                console.log('✅ Event listener adicionado ao backToLogin');
+            }
+            
+        }, 1000); // Aguardar 1 segundo para garantir que tudo carregou
 
-            // 1. Verificar se os elementos existem
-            setTimeout(function() {
-                console.log('🔍 Verificando elementos...');
-                
-                const showRegister = document.getElementById('showRegister');
-                const showLogin = document.getElementById('showLogin');
-                const showForgotPassword = document.getElementById('showForgotPassword');
-                const backToLogin = document.getElementById('backToLogin');
-                
-                console.log('showRegister encontrado:', !!showRegister);
-                console.log('showLogin encontrado:', !!showLogin);
-                console.log('showForgotPassword encontrado:', !!showForgotPassword);
-                console.log('backToLogin encontrado:', !!backToLogin);
-                
-                // 2. Verificar se a função showAuthForm existe
-                console.log('Função showAuthForm existe:', typeof showAuthForm);
-                
-                // 3. Adicionar event listeners com debug
-                if (showRegister) {
-                    showRegister.addEventListener('click', function(e) {
-                        console.log('🟢 CLIQUE EM showRegister DETECTADO!');
-                        e.preventDefault();
-                        console.log('🔄 Chamando showAuthForm("register")...');
-                        if (typeof showAuthForm === 'function') {
-                            showAuthForm('register');
-                            console.log('✅ showAuthForm("register") executado');
-                        } else {
-                            console.error('❌ showAuthForm não é uma função!');
-                        }
-                    });
-                    console.log('✅ Event listener adicionado ao showRegister');
-                } else {
-                    console.error('❌ Elemento showRegister não encontrado!');
-                }
-                
-                if (showLogin) {
-                    showLogin.addEventListener('click', function(e) {
-                        console.log('🟢 CLIQUE EM showLogin DETECTADO!');
-                        e.preventDefault();
-                        showAuthForm('login');
-                    });
-                    console.log('✅ Event listener adicionado ao showLogin');
-                }
-                
-                if (showForgotPassword) {
-                    showForgotPassword.addEventListener('click', function(e) {
-                        console.log('🟢 CLIQUE EM showForgotPassword DETECTADO!');
-                        e.preventDefault();
-                        showAuthForm('forgot');
-                    });
-                    console.log('✅ Event listener adicionado ao showForgotPassword');
-                }
-                
-                if (backToLogin) {
-                    backToLogin.addEventListener('click', function(e) {
-                        console.log('🟢 CLIQUE EM backToLogin DETECTADO!');
-                        e.preventDefault();
-                        showAuthForm('login');
-                    });
-                    console.log('✅ Event listener adicionado ao backToLogin');
-                }
-                
-            }, 1000); // Aguardar 1 segundo para garantir que tudo carregou
+        // 4. Teste manual da função
+        window.testarShowAuthForm = function() {
+            console.log('🧪 TESTE MANUAL - Chamando showAuthForm("register")...');
+            if (typeof showAuthForm === 'function') {
+                showAuthForm('register');
+                console.log('✅ Função executou com sucesso!');
+            } else {
+                console.error('❌ showAuthForm não existe!');
+            }
+        };
 
-            // 4. Teste manual da função
-            window.testarShowAuthForm = function() {
-                console.log('🧪 TESTE MANUAL - Chamando showAuthForm("register")...');
-                if (typeof showAuthForm === 'function') {
-                    showAuthForm('register');
-                    console.log('✅ Função executou com sucesso!');
-                } else {
-                    console.error('❌ showAuthForm não existe!');
-                }
-            };
-
-            console.log('🎯 DEBUG INSTALADO! Digite no console: testarShowAuthForm()');
-            // =========== FIM DO DEBUG ===========
-        </script>
+        console.log('🎯 DEBUG INSTALADO! Digite no console: testarShowAuthForm()');
+        // =========== FIM DO DEBUG ===========
+    </script>
 </body>
 </html>
